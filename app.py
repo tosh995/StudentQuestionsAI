@@ -39,10 +39,7 @@ st.header("Questions Generator")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("This is an AI Question Generator Tool. \n\n It takes \
-                a student's topic of interest and Common core learning standard as an input and generates \ 
-                5 open ended questions for the student to answer. This tool \
-                is powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
+    st.markdown("This is an AI Question Generator Tool. \n\n It takes a students topic of interest and Common core learning standard as an input and generates 5 open ended questions for the student to answer. This toolis powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
 
 with col2:
     st.image(image='AIGenerator.jpg', width=500, caption='AI Tutor')
