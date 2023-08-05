@@ -1,7 +1,8 @@
-import streamlit as st
+import os
 import openai
+import streamlit as st
 
-openai.api_key = 'your-openai-api-key'
+openai.api_key = os.getenv("API_KEY")
 
 def main():
     st.title('GPT-4 Question Generator')
@@ -20,7 +21,7 @@ def main():
             response = openai.Completion.create(
                 engine="text-davinci-003",  # as of my knowledge cutoff, this was the latest engine
                 prompt=prompt,
-                temperature=0.5,
+                temperature=0.6,
                 max_tokens=60
             )
 
