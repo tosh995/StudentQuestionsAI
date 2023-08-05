@@ -3,36 +3,27 @@ from langchain import PromptTemplate
 from langchain.llms import OpenAI
 
 template = """
-    Below is an email that may be poorly worded.
-    Your goal is to:
-    - Properly format the email
-    - Convert the input text to a specified tone
-    - Convert the input text to a specified dialect
 
-    Here are some examples different Tones:
-    - Formal: We went to Barcelona for the weekend. We have a lot of things to tell you.
-    - Informal: Went to Barcelona for the weekend. Lots to tell you.  
+    You are a tutor for a 4th grade student. Take the following topic of interest from the student and the common core learning standard and create 5 questions. Each question should be in the following format:
 
-    Here are some examples of words in different dialects:
-    - American: French Fries, cotton candy, apartment, garbage, cookie, green thumb, parking lot, pants, windshield
-    - British: chips, candyfloss, flag, rubbish, biscuit, green fingers, car park, trousers, windscreen
-
-    Example Sentences from each dialect:
-    - American: I headed straight for the produce section to grab some fresh vegetables, like bell peppers and zucchini. After that, I made my way to the meat department to pick up some chicken breasts.
-    - British: Well, I popped down to the local shop just the other day to pick up a few bits and bobs. As I was perusing the aisles, I noticed that they were fresh out of biscuits, which was a bit of a disappointment, as I do love a good cuppa with a biscuit or two.
-
-    Please start the email with a warm introduction. Add the introduction if you need to.
     
-    Below is the email, tone, and dialect:
-    TONE: {tone}
-    DIALECT: {dialect}
-    EMAIL: {email}
+    - Introduction
+    - Context about the question
+    - Open ended question
+    - A rubrik to help the student understand how their answer to the question will be evaluated
     
-    YOUR {dialect} RESPONSE:
+  
+    
+    
+    TOPIC: {topic}
+    STANDARD: {standard}
+
+    
+    Your Questions Response:
 """
 
 prompt = PromptTemplate(
-    input_variables=["tone", "dialect", "email"],
+    input_variables=["topic", "standard"],
     template=template,
 )
 
@@ -42,21 +33,21 @@ def load_LLM(openai_api_key):
     llm = OpenAI(temperature=.7, openai_api_key=openai_api_key)
     return llm
 
-st.set_page_config(page_title="Globalize Email", page_icon=":robot:")
-st.header("Globalize Text")
+st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
+st.header("Questions Generator")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("Often professionals would like to improve their emails, but don't have the skills to do so. \n\n This tool \
-                will help you improve your email skills by converting your emails into a more professional format. This tool \
-                is powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) and made by \
-                [@GregKamradt](https://twitter.com/GregKamradt). \n\n View Source Code on [Github](https://github.com/gkamradt/globalize-text-streamlit/blob/main/main.py)")
+    st.markdown("This is an AI Question Generator Tool. \n\n It takes \
+                a student's topic of interest and Common core learning standard as an input and generates \ 
+                5 open ended questions for the student to answer. This tool \
+                is powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
 
 with col2:
-    st.image(image='TweetScreenshot.png', width=500, caption='https://twitter.com/DannyRichman/status/1598254671591723008')
+    st.image(image='AIGenerator.jpg', width=500, caption='AI Tutor')
 
-st.markdown("## Enter Your Email To Convert")
+st.markdown("## Enter your topic of interest")
 
 def get_api_key():
     input_text = st.text_input(label="OpenAI API Key ",  placeholder="Ex: sk-2twmA8tfCb8un4...", key="openai_api_key_input")
@@ -64,30 +55,26 @@ def get_api_key():
 
 openai_api_key = get_api_key()
 
-col1, col2 = st.columns(2)
-with col1:
-    option_tone = st.selectbox(
-        'Which tone would you like your email to have?',
-        ('Formal', 'Informal'))
+
     
-with col2:
-    option_dialect = st.selectbox(
-        'Which English Dialect would you like?',
-        ('American', 'British'))
 
-def get_text():
-    input_text = st.text_area(label="Email Input", label_visibility='collapsed', placeholder="Your Email...", key="email_input")
-    return input_text
+    option_standard = st.selectbox(
+        'Which learning standard would you like to test?',
+        ('CCSS.ELA-LITERACY.W.4.1', 'CCSS.ELA-LITERACY.W.4.2', 'CCSS.ELA-LITERACY.W.4.3', 'CCSS.ELA-LITERACY.W.4.4','CCSS.ELA-LITERACY.W.4.5', 'CCSS.ELA-LITERACY.W.4.6','CCSS.ELA-LITERACY.W.4.7', 'CCSS.ELA-LITERACY.W.4.8','CCSS.ELA-LITERACY.W.4.9', 'CCSS.ELA-LITERACY.W.4.10'))
 
-email_input = get_text()
+def get_topic():
+    input_topic = st.text_input(label="Topic of Interest", placeholder="Example: vacation, basketball, dog etc....", key="topic_input")
+    return input_topic
 
-if len(email_input.split(" ")) > 700:
-    st.write("Please enter a shorter email. The maximum length is 700 words.")
+topic_input = get_topic()
+
+if len(topic_input.split(" ")) > 6:
+    st.write("Please enter a shorter topic. The maximum length is 6 words.")
     st.stop()
 
 def update_text_with_example():
     print ("in updated")
-    st.session_state.email_input = "Sally I am starts work at yours monday from dave"
+    st.session_state.topic_input = "basketball"
 
 st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
