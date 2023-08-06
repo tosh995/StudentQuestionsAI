@@ -85,3 +85,36 @@ if topic_input:
 
     st.write(len(output_questions.split(" ")))
     st.write(output_questions)
+    
+    test_segment = """
+    Question 1:
+
+*Introduction: Baseball is an exciting sport that has been around for generations.
+
+*Context: You are a baseball player.
+
+*Question: How can you use practice and preparation to improve your performance on the field?
+
+*Rubric: Your answer should include specific techniques and strategies for improving your skills as a baseball player and demonstrate an understanding of the game.
+
+Question 2:
+
+*Introduction: Writing is a great way to learn and think more deeply about a topic.
+
+*Context: You are researching baseball for a writing project.
+
+*Question: What are some important facts about the history of baseball that you should consider including in your writing?
+
+*Rubric: Your answer should include at least two key facts about the history of baseball and explain why they are important to include in your writing.
+
+Question 3:
+
+*Introduction: The core standards emphasize using writing to learn about a topic.
+
+*Context: You are writing an essay about baseball.
+
+*Question: What are some of the key terms associated with baseball that you should use in your essay?
+
+*Rubric:"""
+
+st.write(len(test_segment.split(" ")))
