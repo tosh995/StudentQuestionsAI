@@ -37,7 +37,7 @@ st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
 st.header("AI Questions Generator")
 
 
-st.markdown("I am an AI Question Generator Tool for 4th grade students. I take a student's topic of interest and Common Core Learning Standard as an input and generate up to 5 open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
+st.markdown("I am an AI Question Generator Tool for 4th grade students. I take a student's topic of interest and Common Core Learning Standard as inputs and generate up to 5 open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
 
 
 st.markdown("## Enter your preferences")
