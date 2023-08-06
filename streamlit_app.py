@@ -5,7 +5,13 @@ from langchain.llms import OpenAI
 api_key = st.secrets["api_key"]
 
 template = """
-    You are a tutor for a 4th grade student. Take the following topic of interest from the student and the common core learning standard and create {count} free response question(FRQ) for the student. Each FRQ should assess the student’s knowledge of the Common Core learning standard, should have the context required to answer the FRQ. Also include a Rubric that will be used for evaluating student's responses & for providing feedback. Do not provide any feedback.
+    You are a tutor for a 4th grade student. Take the following topic of interest from the student and the common core learning standard and create {count} free response question(FRQ) for the student. 
+    
+    Each FRQ should meet the following criteria:
+        1. FRQ should assess the student’s knowledge of the Common Core learning standard, 
+        2. FRQ should have the context required to answer the FRQ. 
+        
+    Also include a Rubric that will be used by the teacher for evaluating student's responses & for providing feedback. Do not provide any feedback.
 
     TOPIC: {topic}
     STANDARD: {standard}
