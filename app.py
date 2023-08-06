@@ -9,16 +9,16 @@ template = """
 
     --example begins--
     Question 1:\n
-    *Introduction: Baseball is a beloved American sport that has been around for centuries. 
-    *Context: Suppose you're a pitcher in a baseball game. 
-    *Question: What strategies could you use to help your team win the game? 
+    *Introduction: Baseball is a beloved American sport that has been around for centuries. \n
+    *Context: Suppose you're a pitcher in a baseball game. \n
+    *Question: What strategies could you use to help your team win the game? \n
     *Rubric: Your answer should include specific strategies and demonstrate an understanding of how the game is played. \n
     
     Question 2:\n
-    Introduction: How can you use writing to learn about basketball?
-    Context: Writing is a great way to help you think critically and learn more about a topic.
-    Question: What are some ways that you can use writing to learn about basketball? 
-    Rubric: Your answer should include at least two ways that you can use writing to learn more about basketball and explain why those methods are effective.
+    Introduction: How can you use writing to learn about basketball? \n
+    Context: Writing is a great way to help you think critically and learn more about a topic.\n
+    Question: What are some ways that you can use writing to learn about basketball? \n
+    Rubric: Your answer should include at least two ways that you can use writing to learn more about basketball and explain why those methods are effective.\n
     --example ends--
    
     TOPIC: {topic}
