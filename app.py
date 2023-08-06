@@ -5,7 +5,7 @@ from langchain.llms import OpenAI
 api_key = st.secrets["api_key"]
 
 template = """
-    You are a tutor for a 4th grade student. Take the following topic of interest from the student and the common core learning standard and create {count} questions. Here is an example of how your response should appear for topic Baseball and 2 questions request:
+    You are a tutor for a 4th grade student. Take the following topic of interest from the student and the common core learning standard and create {count} question(s). Here is an example of how your response should appear for topic Baseball and 2 questions request:
 
     --example begins--
     Question 1:\n
@@ -14,11 +14,6 @@ template = """
     *Question: What strategies could you use to help your team win the game? \n
     *Rubric: Your answer should include specific strategies and demonstrate an understanding of how the game is played. \n
     
-    Question 2:\n
-    *Introduction: How can you use writing to learn about basketball? \n
-    *Context: Writing is a great way to help you think critically and learn more about a topic.\n
-    *Question: What are some ways that you can use writing to learn about basketball? \n
-    *Rubric: Your answer should include at least two ways that you can use writing to learn more about basketball and explain why those methods are effective.\n
     --example ends--
    
     TOPIC: {topic}
