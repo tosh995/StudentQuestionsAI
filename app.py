@@ -88,4 +88,4 @@ if topic_input:
 
    # st.write(len(output_questions.split(" ")))
     # st.write(output_questions)
-    st.write (llm(prompt_with_inputs)
+    st.write (llm(prompt_with_inputs))
