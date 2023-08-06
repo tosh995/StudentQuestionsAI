@@ -87,34 +87,34 @@ if topic_input:
     st.write(output_questions)
     
     test_segment = """
-    Question 1:
+   Question 1:
 
-*Introduction: Baseball is an exciting sport that has been around for generations.
+*Introduction: Baseball is a beloved American sport that has been around for centuries.
 
-*Context: You are a baseball player.
+*Context: Suppose you're writing a persuasive essay about baseball.
 
-*Question: How can you use practice and preparation to improve your performance on the field?
+*Question: What evidence could you use to support your argument that baseball is an important sport?
 
-*Rubric: Your answer should include specific techniques and strategies for improving your skills as a baseball player and demonstrate an understanding of the game.
+*Rubric: Your answer should include at least three pieces of evidence that demonstrate why baseball is important and explain how each piece of evidence supports your argument.
 
 Question 2:
 
-*Introduction: Writing is a great way to learn and think more deeply about a topic.
+*Introduction: Baseball can be a complex game with many rules and regulations.
 
-*Context: You are researching baseball for a writing project.
+*Context: Suppose you're writing a research paper about baseball.
 
-*Question: What are some important facts about the history of baseball that you should consider including in your writing?
+*Question: What are some of the rules and regulations that govern the game of baseball?
 
-*Rubric: Your answer should include at least two key facts about the history of baseball and explain why they are important to include in your writing.
+*Rubric: Your answer should include at least three rules or regulations of baseball and explain how each one affects the game.
 
 Question 3:
 
-*Introduction: The core standards emphasize using writing to learn about a topic.
+*Introduction: Many great baseball players have achieved incredible successes in the sport.
 
-*Context: You are writing an essay about baseball.
+*Context: Suppose you're writing a compare and contrast essay about two famous baseball players.
 
-*Question: What are some of the key terms associated with baseball that you should use in your essay?
+*Question: What similarities and differences can you identify between the two players?
 
-*Rubric:"""
+*Rubric: Your answer should include at least"""
 
 st.write(len(test_segment.split(" ")))
