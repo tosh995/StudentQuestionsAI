@@ -83,4 +83,5 @@ if topic_input:
 
     output_questions = llm(prompt_with_inputs)
 
+    st.write (len(output_questions.split(" "))
     st.write(output_questions)
