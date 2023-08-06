@@ -80,7 +80,7 @@ if topic_input:
 
     output_questions = llm(prompt_with_inputs)
 
-    st.markdown("### Here are Your Questions:")
+    st.markdown("### Your Question(s):")
 
     st.write(output_questions)
     #st.write (llm(prompt_with_inputs))
