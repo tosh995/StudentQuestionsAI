@@ -33,6 +33,7 @@ prompt = PromptTemplate(
 def load_LLM(openai_api_key):
     """Logic for loading the chain"""
     llm = OpenAI(temperature=.6, openai_api_key=openai_api_key)
+     st.write(len(llm.split(" ")))
     return llm
 
 st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
@@ -86,35 +87,4 @@ if topic_input:
     st.write(len(output_questions.split(" ")))
     st.write(output_questions)
     
-    test_segment = """
-   Question 1:
-
-*Introduction: Baseball is a beloved American sport that has been around for centuries.
-
-*Context: Suppose you're writing a persuasive essay about baseball.
-
-*Question: What evidence could you use to support your argument that baseball is an important sport?
-
-*Rubric: Your answer should include at least three pieces of evidence that demonstrate why baseball is important and explain how each piece of evidence supports your argument.
-
-Question 2:
-
-*Introduction: Baseball can be a complex game with many rules and regulations.
-
-*Context: Suppose you're writing a research paper about baseball.
-
-*Question: What are some of the rules and regulations that govern the game of baseball?
-
-*Rubric: Your answer should include at least three rules or regulations of baseball and explain how each one affects the game.
-
-Question 3:
-
-*Introduction: Many great baseball players have achieved incredible successes in the sport.
-
-*Context: Suppose you're writing a compare and contrast essay about two famous baseball players.
-
-*Question: What similarities and differences can you identify between the two players?
-
-*Rubric: Your answer should include at least"""
-
-st.write(len(test_segment.split(" ")))
+   
