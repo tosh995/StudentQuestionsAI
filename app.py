@@ -73,7 +73,6 @@ def update_text_with_example():
 
 st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
-st.markdown("### Your Questions:")
 
 if topic_input:
     if not option_standard:
@@ -86,7 +85,8 @@ if topic_input:
 
     output_questions = llm(prompt_with_inputs)
 
-    st.write(len(output_questions.split(" ")))
+    st.markdown("### Here are Your Questions:")
+
     st.write(output_questions)
     #st.write (llm(prompt_with_inputs))
     
