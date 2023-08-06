@@ -33,7 +33,7 @@ prompt = PromptTemplate(
 
 def load_LLM(openai_api_key):
     """Logic for loading the chain"""
-    llm = OpenAI(temperature=0.6, openai_api_key=openai_api_key)
+    llm = OpenAI(temperature=0.6, openai_api_key=openai_api_key, maxtokens = 500)
     return llm
     
 
@@ -84,13 +84,10 @@ if topic_input:
 
     prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
 
-    #output_questions = llm(prompt_with_inputs)
+    output_questions = llm(prompt_with_inputs)
 
-   # st.write(len(output_questions.split(" ")))
-    # st.write(output_questions)
+   st.write(len(output_questions.split(" ")))
+    st.write(output_questions)
     #st.write (llm(prompt_with_inputs))
     
-    output_questions = llm(prompt_with_inputs)
-output_chunks = [output_questions[i:i + 1000] for i in range(0, len(output_questions), 1000)]
-for chunk in output_chunks:
-    st.write(chunk)
+   
