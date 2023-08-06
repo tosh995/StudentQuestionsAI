@@ -5,17 +5,23 @@ from langchain.llms import OpenAI
 api_key = st.secrets["api_key"]
 
 template = """
-    You are a tutor for a 4th grade student. Take the following topic of interest from the student and the common core learning standard and create {count} questions. Each question should be in the following format:
+    You are a tutor for a 4th grade student. Take the following topic of interest from the student and the common core learning standard and create {count} questions. Here is an example of how your response should appear for topic Baseball and 2 questions request:
 
+    --example begins--
+    Question 1:
+    Introduction: Baseball is a beloved American sport that has been around for centuries. 
+    Context: Suppose you're a pitcher in a baseball game. 
+    Question: What strategies could you use to help your team win the game? 
+    Rubric: Your answer should include specific strategies and demonstrate an understanding of how the game is played.
     
-    - Introduction
-    - Context about the question
-    - Open ended question
     
-    
-    
-    - A rubrik to help the student understand how their answer to the question will be evaluated
-  
+    Question 2:
+    Introduction: How can you use writing to learn about basketball?
+    Context: Writing is a great way to help you think critically and learn more about a topic.
+    Question: What are some ways that you can use writing to learn about basketball? 
+    Rubric: Your answer should include at least two ways that you can use writing to learn more about basketball and explain why those methods are effective.
+    --example ends--
+   
     TOPIC: {topic}
     STANDARD: {standard}
 """
@@ -33,13 +39,9 @@ def load_LLM(openai_api_key):
 st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
 st.header("AI Questions Generator")
 
-col1, col2 = st.columns(2)
 
-with col1:
-    st.markdown("This is an AI Question Generator Tool. \n\n It takes a student's topic of interest and Common core learning standard as an input and generates 5 open ended questions for the student to answer. This tool is powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
+st.markdown("This is an AI Question Generator Tool. \n\n It takes a student's topic of interest and Common core learning standard as an input and generates 5 open ended questions for the student to answer. This tool is powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
 
-with col2:
-    st.image(image='AIGenerator.jpg', width=500, caption='AI Tutor')
 
 st.markdown("## Enter your preferences")
 
