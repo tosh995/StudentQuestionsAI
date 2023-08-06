@@ -30,29 +30,12 @@ prompt = PromptTemplate(
     template=template,
 )
 
-"""def load_LLM(openai_api_key):
-    "Logic for loading the chain"
-    llm = OpenAI(temperature=.6, openai_api_key=openai_api_key)
-    st.write(len(llm.split(" ")))
-    return llm"""
-    
 
 def load_LLM(openai_api_key):
     """Logic for loading the chain"""
-    # Setting the API key for OpenAI
-    openai.api_key = openai_api_key
+    llm = OpenAI(temperature=0.6, openai_api_key=openai_api_key)
+    return llm
     
-    # Assuming you want to send some prompt to OpenAI for completion
-    prompt = "Your prompt here"
-    response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, temperature=0.6)
-
-    # Extracting the text from the response
-    text = response.choices[0].text
-
-    # Writing the number of words in the response to the Streamlit app
-    st.write(len(text.split(" ")))
-
-    return text
 
 
 st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
@@ -101,9 +84,10 @@ if topic_input:
 
     prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
 
-    output_questions = llm(prompt_with_inputs)
+    #output_questions = llm(prompt_with_inputs)
 
-    st.write(len(output_questions.split(" ")))
-    st.write(output_questions)
+   # st.write(len(output_questions.split(" ")))
+    st.write (llm(prompt_with_inputs)
+    # st.write(output_questions)
     
    
