@@ -2,8 +2,9 @@ import streamlit as st
 from langchain import PromptTemplate
 from langchain.llms import OpenAI
 
-template = """
+api_key = st.secrets["api_key"]
 
+template = """
     You are a tutor for a 4th grade student. Take the following topic of interest from the student and the common core learning standard and create {count} questions. Each question should be in the following format:
 
     
@@ -20,13 +21,12 @@ template = """
 """
 
 prompt = PromptTemplate(
-    input_variables=["topic", "standard","count"],
+    input_variables=["topic", "standard", "count"],
     template=template,
 )
 
 def load_LLM(openai_api_key):
-    """Logic for loading the chain you want to use should go here."""
-    # Make sure your openai_api_key is set as an environment variable
+    """Logic for loading the chain"""
     llm = OpenAI(temperature=.6, openai_api_key=openai_api_key)
     return llm
 
@@ -76,7 +76,7 @@ if topic_input:
         st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
         st.stop()
 
-    llm = load_LLM(openai_api_key=openai_api_key)
+    llm = load_LLM(openai_api_key=api_key)
 
     prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
 
