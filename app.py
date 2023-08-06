@@ -33,7 +33,7 @@ prompt = PromptTemplate(
 
 def load_LLM(openai_api_key):
     """Logic for loading the chain"""
-    llm = OpenAI(temperature=0.6, openai_api_key=openai_api_key, max_tokens=4000)
+    llm = OpenAI(temperature=0.6, openai_api_key=openai_api_key)
     return llm
     
 
