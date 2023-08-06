@@ -33,7 +33,7 @@ prompt = PromptTemplate(
 def load_LLM(openai_api_key):
     """Logic for loading the chain"""
     llm = OpenAI(temperature=.6, openai_api_key=openai_api_key)
-     st.write(len(llm.split(" ")))
+    st.write(len(llm.split(" ")))
     return llm
 
 st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
