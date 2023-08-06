@@ -88,4 +88,9 @@ if topic_input:
 
    # st.write(len(output_questions.split(" ")))
     # st.write(output_questions)
-    st.write (llm(prompt_with_inputs))
+    #st.write (llm(prompt_with_inputs))
+    
+    output_questions = llm(prompt_with_inputs)
+output_chunks = [output_questions[i:i + 1000] for i in range(0, len(output_questions), 1000)]
+for chunk in output_chunks:
+    st.write(chunk)
