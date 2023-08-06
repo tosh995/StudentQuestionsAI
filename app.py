@@ -15,10 +15,10 @@ template = """
     *Rubric: Your answer should include specific strategies and demonstrate an understanding of how the game is played. \n
     
     Question 2:\n
-    Introduction: How can you use writing to learn about basketball? \n
-    Context: Writing is a great way to help you think critically and learn more about a topic.\n
-    Question: What are some ways that you can use writing to learn about basketball? \n
-    Rubric: Your answer should include at least two ways that you can use writing to learn more about basketball and explain why those methods are effective.\n
+    *Introduction: How can you use writing to learn about basketball? \n
+    *Context: Writing is a great way to help you think critically and learn more about a topic.\n
+    *Question: What are some ways that you can use writing to learn about basketball? \n
+    *Rubric: Your answer should include at least two ways that you can use writing to learn more about basketball and explain why those methods are effective.\n
     --example ends--
    
     TOPIC: {topic}
@@ -39,7 +39,7 @@ st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
 st.header("AI Questions Generator")
 
 
-st.markdown("This is an AI Question Generator Tool. \n\n It takes a student's topic of interest and Common core learning standard as an input and generates 5 open ended questions for the student to answer. This tool is powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
+st.markdown("This is an AI Question Generator Tool. It takes a student's topic of interest and Common core learning standard as an input and generates 5 open ended questions for the student to answer. This tool is powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
 
 
 st.markdown("## Enter your preferences")
@@ -48,7 +48,7 @@ st.markdown("## Enter your preferences")
 col1, col2 = st.columns(2)
 
 with col1:
-    option_standard = st.selectbox('Which learning standard would you like to test?',
+    option_standard = st.selectbox('Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W/4/) would you like to test?',
     ('CCSS.ELA-LITERACY.W.4.1', 'CCSS.ELA-LITERACY.W.4.2', 'CCSS.ELA-LITERACY.W.4.3', 'CCSS.ELA-LITERACY.W.4.4','CCSS.ELA-LITERACY.W.4.5','CCSS.ELA-LITERACY.W.4.6','CCSS.ELA-LITERACY.W.4.7', 'CCSS.ELA-LITERACY.W.4.8','CCSS.ELA-LITERACY.W.4.9', 'CCSS.ELA-LITERACY.W.4.10'))
 
 with col2:
