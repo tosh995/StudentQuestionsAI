@@ -148,14 +148,14 @@ if topic_input:
 
     output_questions = llm(prompt_with_inputs)
     
-    #QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=option_standard,count=option_count,output=output_questions)
+    QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=option_standard,count=option_count,output=output_questions)
     
-   # QA_Score = llm(QA_prompt_with_inputs)
+   QA_Score = llm(QA_prompt_with_inputs)
     
 
     st.markdown("### Your Question(s):")
     
- #   st.write(QA_Score)
+    st.write(QA_Score)
 
 
     st.write(output_questions)
