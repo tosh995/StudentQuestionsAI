@@ -64,7 +64,7 @@ QA_template = """
         1: Question is highly biased or culturally insensitive.
 
     Provide your response in the following JSON format where each X represents the score of 1 to 5 of each element of the rubrik above. Do not output any other information. Sample JSON response format:
-        {
+        
         "question_topic": "France",
         "CCSS_standard" : "CCSS.ELA-LITERACY.W.4.1"
         "question_text": "What is the capital of France?",
@@ -76,7 +76,7 @@ QA_template = """
         "bias_and_sensitivity": 4,
         "overall_quality": 3
         "evaluated_at": "2023-08-07T12:34:56"
-        }
+        
 
 
     Here below are the inputs that were provided to the Question Generator Tool:
