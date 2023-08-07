@@ -1,4 +1,6 @@
 import streamlit as st
+import sqlite3
+import json
 from langchain import PromptTemplate
 from langchain.llms import OpenAI
 
@@ -162,12 +164,75 @@ if topic_input:
     
     QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=option_standard,count=option_count,output=output_questions)
     
-    QA_Score = llm(QA_prompt_with_inputs)
+    QA_Response = llm(QA_prompt_with_inputs)
     
 
+    # JSON data
+    data = QA_Response
+
+    # Connect to SQLite database (or create it if it doesn't exist)
+    conn = sqlite3.connect('QA_Response.db')
+
+    # Create a cursor object to execute SQL commands
+    cursor = conn.cursor()
+
+    # Create a table to store the AI tool's output
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS questions (
+        question_topic TEXT,
+        CCSS_standard TEXT,
+        question_text TEXT,
+        relevance_to_CCSS_standard INTEGER,
+        relevance_to_topic_of_interest INTEGER,
+        question_clarity_and_complexity INTEGER,
+        rubric_quality INTEGER,
+        creativity_and_engagement INTEGER,
+        bias_and_sensitivity INTEGER,
+        overall_quality INTEGER,
+        evaluated_at TIMESTAMP
+    )
+    ''')
+
+    # Insert the JSON data into the table
+    cursor.execute('''
+    INSERT INTO questions (
+        question_topic,
+        CCSS_standard,
+        question_text,
+        relevance_to_CCSS_standard,
+        relevance_to_topic_of_interest,
+        question_clarity_and_complexity,
+        rubric_quality,
+        creativity_and_engagement,
+        bias_and_sensitivity,
+        overall_quality,
+        evaluated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        data['question_topic'],
+        data['CCSS_standard'],
+        data['question_text'],
+        data['relevance_to_CCSS_standard'],
+        data['relevance_to_topic_of_interest'],
+        data['question_clarity_and_complexity'],
+        data['rubric_quality'],
+        data['creativity_and_engagement'],
+        data['bias_and_sensitivity'],
+        data['overall_quality'],
+        data['evaluated_at']
+    ))
+
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
+
+    
+    
     st.markdown("### Your Question(s):")
     
     st.write(QA_Score)
+    
+    
 
 
     st.write(output_questions)
