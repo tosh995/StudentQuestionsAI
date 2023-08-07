@@ -8,16 +8,17 @@ template = """
     You are a tutor for a 4th grade student. Take the following topic of interest from the student and the common core learning standard and create {count} free response question(FRQ) for the student. 
     
     Each FRQ should meet the following criteria:
-        1. FRQ should assess the student’s knowledge of the Common Core learning standard, 
+        1. FRQ should assess the student’s knowledge of the Common Core learning standard
         2. FRQ should have the context required to answer the FRQ. 
+        3. Assume that the student will be viewing the question and the student is not familiar with the details of the learning standard. So provide any additional context to the question.
         
-    Also include a Rubric that will be used by the teacher for evaluating student's responses & for providing feedback. Do not provide any feedback.
+    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide any feedback.
 
     TOPIC: {topic}
     STANDARD: {standard}
 """
 
-prompt = PromptTemplate(
+prompt1 = PromptTemplate(
     input_variables=["topic", "standard", "count"],
     template=template,
 )
@@ -73,9 +74,14 @@ if topic_input:
 
     llm = load_LLM(openai_api_key=api_key)
 
-    prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
+    prompt_with_inputs = prompt1.format(topic=topic_input,standard=option_standard,count=option_count)
 
     output_questions = llm(prompt_with_inputs)
+    
+    
+    
+    
+    
 
     st.markdown("### Your Question(s):")
 
