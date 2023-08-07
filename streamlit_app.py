@@ -12,7 +12,7 @@ template = """
         2. FRQ should have the context required to answer the FRQ. 
         3. Assume that the student will be viewing the question and the student is not familiar with the details of the learning standard. So provide any additional context to the question.
         
-    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide any feedback.
+    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide rubric in a tabular format. Do not provide any feedback.
 
     TOPIC: {topic}
     STANDARD: {standard}
