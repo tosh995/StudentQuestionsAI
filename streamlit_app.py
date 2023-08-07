@@ -89,7 +89,7 @@ prompt = PromptTemplate(
 
 QA_prompt = PromptTemplate(
     input_variables=["topic", "standard", "count", "output"],
-    QA_template=QA_template,
+    template=QA_template,
 )
 
 
