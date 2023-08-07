@@ -168,7 +168,10 @@ if topic_input:
     
 
     # JSON data
-    data = QA_Response
+    data_string = QA_Response
+    
+    # Parse the JSON string into a dictionary
+    data = json.loads(data_string)
 
     # Connect to SQLite database (or create it if it doesn't exist)
     conn = sqlite3.connect('QA_Response.db')
