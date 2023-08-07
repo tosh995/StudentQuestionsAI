@@ -150,7 +150,7 @@ if topic_input:
     
     QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=option_standard,count=option_count,output=output_questions)
     
-   QA_Score = llm(QA_prompt_with_inputs)
+    QA_Score = llm(QA_prompt_with_inputs)
     
 
     st.markdown("### Your Question(s):")
