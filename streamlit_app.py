@@ -233,7 +233,7 @@ if topic_input:
     
     st.markdown("### Your Question(s):")
     
-    st.write(QA_Score)
+    st.write(QA_Response)
     
     
 
