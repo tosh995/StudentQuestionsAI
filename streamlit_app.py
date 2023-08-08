@@ -256,7 +256,7 @@ def load_first_input_page():
     global option_count
     global option_standard
     global topic_input
-    if counter==0;
+    if counter==0:
         st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
         st.header("AI Questions Generator")
 
