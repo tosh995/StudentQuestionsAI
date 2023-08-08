@@ -90,6 +90,9 @@ QA_template = """
     OUTPUT: {output}
 """
 
+
+standard_template = """Is {standard} a valid CCSS standard? Answer only YES or NO."""
+
     
 counter=0
 output_questions=""
@@ -109,6 +112,11 @@ QA_prompt = PromptTemplate(
 )
 
 
+standard_prompt = PromptTemplate(
+    input_variables=["standard"],
+    template=standard_template,
+)
+
 
 def load_LLM(openai_api_key):
     """Logic for loading the chain"""
@@ -117,6 +125,12 @@ def load_LLM(openai_api_key):
 
 def reset_question_input_page():
     st.session_state.topic_input = ""
+    st.session_state.standard_input = ""
+    
+
+def default_question_input_page():
+    st.session_state.topic_input = "Baseball"
+    st.session_state.standard_input = "CCSS.ELA-LITERACY.W.4.9"    
 
 
 def get_topic():
@@ -242,13 +256,14 @@ def start_generate():
     global QA_response
     if topic_input:
         if not standard_input:
-            st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
+            st.warning('Please enter a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
             st.stop()
         counter=0
         output_questions=""
         QA_result=""       
         QA_response=""
         generate_question()
+        st.session_state.reset = True
         st.markdown("### Your Question(s):")
         #st.write(QA_response)
         #st.write (counter)
@@ -266,7 +281,7 @@ def load_first_input_page():
     st.header("AI Questions Generator")
 
 
-    st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate up to 5 open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
+    st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
 
 
     st.markdown("## Enter your preferences")
@@ -287,14 +302,16 @@ def load_first_input_page():
     topic_input = get_topic()
 
 
-    col3, col4 = st.columns(2)
+    col3, col4, col5 = st.columns(3)
     
     with col3:
         st.button("Generate Question",type='secondary', help="Click to generate a question", on_click=start_generate)
 
     with col4:
-        st.button("Reset", type='secondary', help="Click to see an example of the email you will be converting.", on_click=reset_question_input_page)
+        st.button("Reset", type='secondary', help="Click to reset the page", on_click=reset_question_input_page)
 
+    with col5:
+        st.button("Default", type='secondary', help="Click to use default values", on_click=default_question_input_page)
 
 
 if counter == 0: 
