@@ -256,7 +256,7 @@ def QA_check(QA_response):
 
 
 
-def gene_rate():
+def start_generate():
     if topic_input:
         if not option_standard:
             st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
@@ -279,4 +279,4 @@ def gene_rate():
  
  
  
-st.button("Generate Question", help="Click to generate a question", on_click=gene_rate)
+st.button("Generate Question", help="Click to generate a question", on_click=start_generate)
