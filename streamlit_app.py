@@ -263,6 +263,7 @@ def start_generate():
         QA_result=""       
         QA_response=""
         generate_question()
+        st.header("AI Questions Generator")
         st.markdown("### Your Question(s):")
         #st.write(QA_response)
         #st.write (counter)
