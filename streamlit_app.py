@@ -252,26 +252,7 @@ if topic_input:
     
     st.markdown("### Your Question(s):")
     st.write(QA_Response)
+    st.write (counter)
     st.write(output_questions)
     
     
-counter = 0
-
-def step_one():
-    global counter
-    print("Executing Step One")
-    counter += 1
-    if counter < 5 and some_condition:
-        step_two()
-
-def step_two():
-    global counter
-    print("Executing Step Two")
-    counter += 1
-    if counter < 5 and another_condition:
-        step_one()
-
-# Start the execution
-some_condition = True
-another_condition = True
-step_one()
