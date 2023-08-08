@@ -155,7 +155,7 @@ st.button("*See An Example*", type='secondary', help="Click to see an example of
 def generate_question():
     global counter
     global output_questions
-    global QA_result
+    global QA_Response
     counter += 1
     llm = load_LLM(openai_api_key=api_key)
     prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
@@ -255,7 +255,8 @@ if topic_input:
         st.stop()
     counter=0
     output_questions=""
-    QA_result=""            
+    QA_result=""       
+    QA_response=""
     generate_question()
     st.markdown("### Your Question(s):")
     st.write(QA_Response)
