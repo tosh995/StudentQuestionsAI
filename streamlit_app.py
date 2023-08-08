@@ -257,6 +257,10 @@ def gene_rate():
         if not option_standard:
             st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
             st.stop()
+        global counter
+        global output_questions
+        global QA_result   
+        global QA_response
         counter=0
         output_questions=""
         QA_result=""       
@@ -266,5 +270,12 @@ def gene_rate():
         st.write(QA_Response)
         st.write (counter)
         st.write(output_questions)
+ 
+counter=0
+output_questions=""
+QA_result=""       
+QA_response=""
+ 
+ 
  
 st.button("Generate Question", help="Click to generate a question", on_click=gene_rate())
