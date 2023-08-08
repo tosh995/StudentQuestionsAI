@@ -159,21 +159,21 @@ QA_response=""
 def generate_question():
     global counter
     global output_questions
-    global QA_Response
+    global QA_response
     counter += 1
     llm = load_LLM(openai_api_key=api_key)
     prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
     output_questions = llm(prompt_with_inputs)
     QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=option_standard,count=option_count,output=output_questions)
-    QA_Response = llm(QA_prompt_with_inputs)
-    QA_check(QA_Response=QA_Response)
+    QA_response = llm(QA_prompt_with_inputs)
+    QA_check(QA_response=QA_response)
 
 
-def QA_check(QA_Response):
+def QA_check(QA_response):
     global QA_result
     global counter
     # Parse the JSON string into a dictionary
-    data = json.loads(QA_Response)
+    data = json.loads(QA_response)
     
     if ( data['relevance_to_CCSS_standard'] < 4 or 
         data['relevance_to_topic_of_interest'] < 4 or
@@ -188,7 +188,7 @@ def QA_check(QA_Response):
     data['QA_result'] = QA_result
     st.write("Attempt Number " + str(counter) + " " + QA_result)
     # Connect to SQLite database (or create it if it doesn't exist)
-    conn = sqlite3.connect('QA_Response.db')
+    conn = sqlite3.connect('QA_response.db')
 
     # Create a cursor object to execute SQL commands
     cursor = conn.cursor()
@@ -271,7 +271,7 @@ def gene_rate():
         QA_response=""
         generate_question()
         st.markdown("### Your Question(s):")
-        st.write(QA_Response)
+        st.write(QA_response)
         st.write (counter)
         st.write(output_questions)
  
