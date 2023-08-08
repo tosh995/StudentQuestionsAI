@@ -227,6 +227,26 @@ def QA_check(QA_response):
         generate_question()
 
 
+def start_generate():
+    global topic_input
+    global option_standard
+    global counter
+    global output_questions
+    global QA_result   
+    global QA_response
+    if topic_input:
+        if not option_standard:
+            st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
+            st.stop()
+        counter=0
+        output_questions=""
+        QA_result=""       
+        QA_response=""
+        generate_question()
+        st.markdown("### Your Question(s):")
+        #st.write(QA_response)
+        #st.write (counter)
+        st.write(output_questions)
 
 def load_first_input_page():
     global topic_input 
@@ -272,25 +292,5 @@ def load_first_input_page():
     st.button("Generate Question", help="Click to generate a question", on_click=start_generate)
 
 
-def start_generate():
-    global topic_input
-    global option_standard
-    global counter
-    global output_questions
-    global QA_result   
-    global QA_response
-    if topic_input:
-        if not option_standard:
-            st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
-            st.stop()
-        counter=0
-        output_questions=""
-        QA_result=""       
-        QA_response=""
-        generate_question()
-        st.markdown("### Your Question(s):")
-        st.write(QA_response)
-        st.write (counter)
-        st.write(output_questions)
  
 load_first_input_page()
