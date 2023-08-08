@@ -152,96 +152,96 @@ st.button("*See An Example*", type='secondary', help="Click to see an example of
 
 
     
-    def generate_question():
-        global counter
-        global output_questions
-        global QA_result
-        counter += 1
-        llm = load_LLM(openai_api_key=api_key)
-        prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
-        output_questions = llm(prompt_with_inputs)
-        QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=option_standard,count=option_count,output=output_questions)
-        QA_Response = llm(QA_prompt_with_inputs)
-        QA_check(QA_Response=QA_Response)
+def generate_question():
+    global counter
+    global output_questions
+    global QA_result
+    counter += 1
+    llm = load_LLM(openai_api_key=api_key)
+    prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
+    output_questions = llm(prompt_with_inputs)
+    QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=option_standard,count=option_count,output=output_questions)
+    QA_Response = llm(QA_prompt_with_inputs)
+    QA_check(QA_Response=QA_Response)
+
+
+def QA_check(QA_Response):
+    global QA_result
+    # Parse the JSON string into a dictionary
+    data = json.loads(QA_Response)
     
-    
-    def QA_check(QA_Response):
-        global QA_result
-        # Parse the JSON string into a dictionary
-        data = json.loads(QA_Response)
-        
-        if ( data['relevance_to_CCSS_standard'] < 3 or 
-            data['relevance_to_topic_of_interest'] < 3 or
-            data['question_clarity_and_complexity'] < 3 or 
-            data['rubric_quality'] < 3 or 
-            data['creativity_and_engagement'] < 3 or 
-            data['bias_and_sensitivity'] < 3 or 
-            data['overall_quality'] < 3 ):
-            QA_result="Fail"
-        else:
-            QA_result="Pass"
-        data['QA_result'] = QA_result
-        st.write(QA_result)
-        # Connect to SQLite database (or create it if it doesn't exist)
-        conn = sqlite3.connect('QA_Response.db')
+    if ( data['relevance_to_CCSS_standard'] < 3 or 
+        data['relevance_to_topic_of_interest'] < 3 or
+        data['question_clarity_and_complexity'] < 3 or 
+        data['rubric_quality'] < 3 or 
+        data['creativity_and_engagement'] < 3 or 
+        data['bias_and_sensitivity'] < 3 or 
+        data['overall_quality'] < 3 ):
+        QA_result="Fail"
+    else:
+        QA_result="Pass"
+    data['QA_result'] = QA_result
+    st.write(QA_result)
+    # Connect to SQLite database (or create it if it doesn't exist)
+    conn = sqlite3.connect('QA_Response.db')
 
-        # Create a cursor object to execute SQL commands
-        cursor = conn.cursor()
+    # Create a cursor object to execute SQL commands
+    cursor = conn.cursor()
 
-        # Create a table to store the AI tool's output
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS questions (
-            question_topic TEXT,
-            CCSS_standard TEXT,
-            question_text TEXT,
-            relevance_to_CCSS_standard INTEGER,
-            relevance_to_topic_of_interest INTEGER,
-            question_clarity_and_complexity INTEGER,
-            rubric_quality INTEGER,
-            creativity_and_engagement INTEGER,
-            bias_and_sensitivity INTEGER,
-            overall_quality INTEGER,
-            QA_result TEXT,
-            evaluated_at TIMESTAMP
-        )
-        ''')
+    # Create a table to store the AI tool's output
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS questions (
+        question_topic TEXT,
+        CCSS_standard TEXT,
+        question_text TEXT,
+        relevance_to_CCSS_standard INTEGER,
+        relevance_to_topic_of_interest INTEGER,
+        question_clarity_and_complexity INTEGER,
+        rubric_quality INTEGER,
+        creativity_and_engagement INTEGER,
+        bias_and_sensitivity INTEGER,
+        overall_quality INTEGER,
+        QA_result TEXT,
+        evaluated_at TIMESTAMP
+    )
+    ''')
 
-        # Insert the JSON data into the table
-        cursor.execute('''
-        INSERT INTO questions (
-            question_topic,
-            CCSS_standard,
-            question_text,
-            relevance_to_CCSS_standard,
-            relevance_to_topic_of_interest,
-            question_clarity_and_complexity,
-            rubric_quality,
-            creativity_and_engagement,
-            bias_and_sensitivity,
-            overall_quality,
-            QA_result,
-            evaluated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
-        ''', (
-            data['question_topic'],
-            data['CCSS_standard'],
-            data['question_text'],
-            data['relevance_to_CCSS_standard'],
-            data['relevance_to_topic_of_interest'],
-            data['question_clarity_and_complexity'],
-            data['rubric_quality'],
-            data['creativity_and_engagement'],
-            data['bias_and_sensitivity'],
-            data['overall_quality'],
-            data['QA_result'],
-            data['evaluated_at']
-        ))
+    # Insert the JSON data into the table
+    cursor.execute('''
+    INSERT INTO questions (
+        question_topic,
+        CCSS_standard,
+        question_text,
+        relevance_to_CCSS_standard,
+        relevance_to_topic_of_interest,
+        question_clarity_and_complexity,
+        rubric_quality,
+        creativity_and_engagement,
+        bias_and_sensitivity,
+        overall_quality,
+        QA_result,
+        evaluated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+    ''', (
+        data['question_topic'],
+        data['CCSS_standard'],
+        data['question_text'],
+        data['relevance_to_CCSS_standard'],
+        data['relevance_to_topic_of_interest'],
+        data['question_clarity_and_complexity'],
+        data['rubric_quality'],
+        data['creativity_and_engagement'],
+        data['bias_and_sensitivity'],
+        data['overall_quality'],
+        data['QA_result'],
+        data['evaluated_at']
+    ))
 
-        # Commit the changes and close the connection
-        conn.commit()
-        conn.close()
-        If (data['QA_result']=="Fail" and counter<3)
-            generate_question()
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
+    If (data['QA_result']=="Fail" and counter<3)
+        generate_question()
 
 
 
