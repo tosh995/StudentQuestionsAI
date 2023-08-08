@@ -247,7 +247,7 @@ if topic_input:
         # Commit the changes and close the connection
         conn.commit()
         conn.close()
-        If (data['QA_result']="Fail" and counter<3):
+        If (data['QA_result']=="Fail" and counter<3):
             generate_question()
 
     
