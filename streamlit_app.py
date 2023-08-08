@@ -116,29 +116,36 @@ def load_LLM(openai_api_key):
     llm = OpenAI(model_name="gpt-3.5-turbo",temperature=0.6, openai_api_key=openai_api_key)
     return llm
 
-def update_text_with_example():
+def reset_question_input_page():
     st.session_state.topic_input = ""
 
 
 def get_topic():
     input_topic = st.text_input(label="Topic of Interest", placeholder="Example: vacation, basketball, dog etc....", key="topic_input")
+    if len(input_topic.split(" ")) > 6:
+        st.write("Please enter a shorter topic. The maximum length is 6 words.")
+        st.stop()
     return input_topic    
 
 
-
+def get_standard():
+    input_standard = st.text_input(label="Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W/4/) would you like to test?", placeholder="Example: CCSS.ELA-LITERACY.W.4.1 etc....", key="standard_input")
     
+    return input_standard
+
+
 def generate_question():
     global counter
     global output_questions
     global QA_response
     global option_count
-    global option_standard
+    global standard_input
     global topic_input
     counter += 1
     llm = load_LLM(openai_api_key=api_key)
-    prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
+    prompt_with_inputs = prompt.format(topic=topic_input,standard=standard_input,count=option_count)
     output_questions = llm(prompt_with_inputs)
-    QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=option_standard,count=option_count,output=output_questions)
+    QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=standard_input,count=option_count,output=output_questions)
     QA_response = llm(QA_prompt_with_inputs)
     QA_check(QA_response=QA_response)
 
@@ -229,13 +236,13 @@ def QA_check(QA_response):
 
 def start_generate():
     global topic_input
-    global option_standard
+    global standard_input
     global counter
     global output_questions
     global QA_result   
     global QA_response
     if topic_input:
-        if not option_standard:
+        if not standard_input:
             st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
             st.stop()
         counter=0
@@ -254,7 +261,7 @@ def load_first_input_page():
     global output_questions
     global QA_response
     global option_count
-    global option_standard
+    global standard_input
     global topic_input
     st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
     st.header("AI Questions Generator")
@@ -266,21 +273,19 @@ def load_first_input_page():
     st.markdown("## Enter your preferences")
 
 
-    col1, col2 = st.columns(2)
+    #col1, col2 = st.columns(2)
 
-    with col1:
-        option_standard = st.selectbox('Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W/4/) would you like to test?',
-        ('CCSS.ELA-LITERACY.W.4.1', 'CCSS.ELA-LITERACY.W.4.2', 'CCSS.ELA-LITERACY.W.4.3', 'CCSS.ELA-LITERACY.W.4.4','CCSS.ELA-LITERACY.W.4.5','CCSS.ELA-LITERACY.W.4.6','CCSS.ELA-LITERACY.W.4.7', 'CCSS.ELA-LITERACY.W.4.8','CCSS.ELA-LITERACY.W.4.9', 'CCSS.ELA-LITERACY.W.4.10'))
+    #with col1:
+    standard_input = get_standard()
+           
+       # st.selectbox('Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W/4/) would you like to test?',
+       # ('CCSS.ELA-LITERACY.W.4.1', 'CCSS.ELA-LITERACY.W.4.2', 'CCSS.ELA-LITERACY.W.4.3', #'CCSS.ELA-LITERACY.W.4.4','CCSS.ELA-LITERACY.W.4.5','CCSS.ELA-LITERACY.W.4.6','CCSS.ELA-LITERACY.W.4.7', #'CCSS.ELA-LITERACY.W.4.8','CCSS.ELA-LITERACY.W.4.9', 'CCSS.ELA-LITERACY.W.4.10'))
 
-    with col2:
-        option_count = st.selectbox('How many questions would you like to generate?',('1','2','3','4','5'))
+    #with col2:
+        #option_count = st.selectbox('How many questions would you like to generate?',('1','2','3','4','5'))
 
 
     topic_input = get_topic()
-
-    if len(topic_input.split(" ")) > 6:
-        st.write("Please enter a shorter topic. The maximum length is 6 words.")
-        st.stop()
 
 
     col3, col4 = st.columns(2)
@@ -289,7 +294,7 @@ def load_first_input_page():
         st.button("Generate Question",type='secondary', help="Click to generate a question", on_click=start_generate)
 
     with col4:
-        st.button("Reset", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
+        st.button("Reset", type='secondary', help="Click to see an example of the email you will be converting.", on_click=reset_question_input_page)
 
 
 
