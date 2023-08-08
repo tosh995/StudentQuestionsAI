@@ -7,9 +7,9 @@ from langchain.llms import OpenAI
 api_key = st.secrets["api_key"]
 
 template = """
-    You are a tutor. Take the following topic of interest from the student and the common core learning standard and create {count} free response question(FRQ) for the student. 
+    You are a tutor. Take the following topic of interest from the student and the common core learning standard and create one free response question(FRQ) for the student. 
     
-    Each FRQ should meet the following criteria:
+    The FRQ should meet the following criteria:
         1. FRQ should assess the student’s knowledge of the Common Core learning standard
         2. FRQ should have the context required to answer the FRQ. 
         3. Assume that the student will be viewing the question and the student is not familiar with the details of the learning standard. So provide any additional context to the question.
@@ -84,7 +84,6 @@ QA_template = """
     Here below are the inputs that were provided to the Question Generator Tool:
      TOPIC: {topic}
      STANDARD: {standard}
-     QUESTIONS TO BE GENERATED: {count}
 
     Here below is the output of the question generator tool for your evaluation:
     
@@ -99,13 +98,13 @@ QA_response=""
 
 
 prompt = PromptTemplate(
-    input_variables=["topic", "standard", "count"],
+    input_variables=["topic", "standard"],
     template=template,
 )
 
 
 QA_prompt = PromptTemplate(
-    input_variables=["topic", "standard", "count", "output"],
+    input_variables=["topic", "standard", "output"],
     template=QA_template,
 )
 
@@ -143,9 +142,9 @@ def generate_question():
     global topic_input
     counter += 1
     llm = load_LLM(openai_api_key=api_key)
-    prompt_with_inputs = prompt.format(topic=topic_input,standard=standard_input,count=option_count)
+    prompt_with_inputs = prompt.format(topic=topic_input,standard=standard_input)
     output_questions = llm(prompt_with_inputs)
-    QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=standard_input,count=option_count,output=output_questions)
+    QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=standard_input,output=output_questions)
     QA_response = llm(QA_prompt_with_inputs)
     QA_check(QA_response=QA_response)
 
