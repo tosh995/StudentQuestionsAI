@@ -158,10 +158,12 @@ if topic_input:
 
     counter=0
     output_questions=""
+    QA_result=""
     
     def generate_question():
         global counter
         global output_questions
+        global QA_result
         counter += 1
         llm = load_LLM(openai_api_key=api_key)
         prompt_with_inputs = prompt.format(topic=topic_input,standard=option_standard,count=option_count)
@@ -184,7 +186,7 @@ if topic_input:
             data['bias_and_sensitivity'] < 3 or 
             data['overall_quality'] < 3 ):
             data['QA_result']="Fail"
-        else
+        else:
             data['QA_result']="Pass"
 
         # Connect to SQLite database (or create it if it doesn't exist)
@@ -249,7 +251,7 @@ if topic_input:
             generate_question()
 
     
-    
+    generate_question()
     st.markdown("### Your Question(s):")
     st.write(QA_Response)
     st.write (counter)
