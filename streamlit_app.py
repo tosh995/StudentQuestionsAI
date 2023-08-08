@@ -250,10 +250,9 @@ def QA_check(QA_Response):
 
 
 
-st.button("Generate", type='secondary', help="Click to generate a question", on_click=generate)
+
 
 def generate():
-    #st.session_state.topic_input = "basketball"
     if topic_input:
         if not option_standard:
             st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
@@ -268,3 +267,4 @@ def generate():
         st.write (counter)
         st.write(output_questions)
  
+st.button("Generate Question", type='secondary', help="Click to generate a question", on_click=generate)
