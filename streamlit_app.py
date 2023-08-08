@@ -146,6 +146,13 @@ def get_standard():
     
     return input_standard
 
+def get_answer():
+    input_answer = st.text_area(label="Your Answer", placeholder="Type your response here...", key="answer_input", height=200)
+    if len(input_topic.split(" ")) > 1000:
+        st.write("Please enter a shorter topic. The maximum length is 1000 words.")
+        st.stop()
+    return input_answer 
+
 
 def generate_question():
     global counter
@@ -180,7 +187,7 @@ def QA_check(QA_response):
     else:
         QA_result="Pass"
     data['QA_result'] = QA_result
-    st.write("Attempt Number " + str(counter) + " " + QA_result)
+   # st.write("Attempt Number " + str(counter) + " " + QA_result)
     # Connect to SQLite database (or create it if it doesn't exist)
     conn = sqlite3.connect('QA_response.db')
 
@@ -268,6 +275,7 @@ def start_generate():
         #st.write(QA_response)
         #st.write (counter)
         st.write(output_questions)
+        input_answer=get_answer()
         st.stop()
 
 def load_first_input_page():
