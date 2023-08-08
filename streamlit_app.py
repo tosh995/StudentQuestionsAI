@@ -170,13 +170,13 @@ def QA_check(QA_Response):
     # Parse the JSON string into a dictionary
     data = json.loads(QA_Response)
     
-    if ( data['relevance_to_CCSS_standard'] < 5 or 
-        data['relevance_to_topic_of_interest'] < 5 or
-        data['question_clarity_and_complexity'] < 5 or 
-        data['rubric_quality'] < 5 or 
-        data['creativity_and_engagement'] < 5 or 
-        data['bias_and_sensitivity'] < 5 or 
-        data['overall_quality'] < 5 ):
+    if ( data['relevance_to_CCSS_standard'] < 4 or 
+        data['relevance_to_topic_of_interest'] < 4 or
+        data['question_clarity_and_complexity'] < 4 or 
+        data['rubric_quality'] < 4 or 
+        data['creativity_and_engagement'] < 4 or 
+        data['bias_and_sensitivity'] < 4 or 
+        data['overall_quality'] < 4 ):
         QA_result="Fail"
     else:
         QA_result="Pass"
