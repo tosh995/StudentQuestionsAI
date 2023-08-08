@@ -132,7 +132,7 @@ def generate_question():
     global output_questions
     global QA_response
     global option_count
-    global optoin _standard
+    global option_standard
     global topic_input
     counter += 1
     llm = load_LLM(openai_api_key=api_key)
@@ -234,7 +234,7 @@ def load_first_input_page():
     global output_questions
     global QA_response
     global option_count
-    global optoin _standard
+    global option_standard
     global topic_input
     st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
     st.header("AI Questions Generator")
