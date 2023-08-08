@@ -240,7 +240,7 @@ def QA_check(QA_Response):
     # Commit the changes and close the connection
     conn.commit()
     conn.close()
-    if (data['QA_result']=="Fail" and counter<3)
+    if (data['QA_result']=="Fail" and counter<3):
         generate_question()
 
 
