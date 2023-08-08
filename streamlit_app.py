@@ -148,7 +148,7 @@ def get_standard():
 
 def get_answer():
     input_answer = st.text_area(label="Your Answer", placeholder="Type your response here...", key="answer_input", height=200)
-    if len(input_topic.split(" ")) > 1000:
+    if len(input_answer.split(" ")) > 1000:
         st.write("Please enter a shorter topic. The maximum length is 1000 words.")
         st.stop()
     return input_answer 
