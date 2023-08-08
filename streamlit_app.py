@@ -227,25 +227,6 @@ def QA_check(QA_response):
 
 
 
-def start_generate():
-    if topic_input:
-        if not option_standard:
-            st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
-            st.stop()
-        global counter
-        global output_questions
-        global QA_result   
-        global QA_response
-        counter=0
-        output_questions=""
-        QA_result=""       
-        QA_response=""
-        generate_question()
-        st.markdown("### Your Question(s):")
-        st.write(QA_response)
-        st.write (counter)
-        st.write(output_questions)
- 
 
 st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
 st.header("AI Questions Generator")
@@ -281,3 +262,24 @@ st.button("*See An Example*", type='secondary', help="Click to see an example of
  
  
 st.button("Generate Question", help="Click to generate a question", on_click=start_generate)
+
+
+def start_generate():
+    if topic_input:
+        if not option_standard:
+            st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
+            st.stop()
+        global counter
+        global output_questions
+        global QA_result   
+        global QA_response
+        counter=0
+        output_questions=""
+        QA_result=""       
+        QA_response=""
+        generate_question()
+        st.markdown("### Your Question(s):")
+        st.write(QA_response)
+        st.write (counter)
+        st.write(output_questions)
+ 
