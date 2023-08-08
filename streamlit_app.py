@@ -117,7 +117,7 @@ def load_LLM(openai_api_key):
     return llm
 
 def update_text_with_example():
-    st.session_state.topic_input = "basketball"
+    st.session_state.topic_input = ""
 
 
 def get_topic():
