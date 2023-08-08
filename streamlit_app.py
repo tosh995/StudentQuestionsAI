@@ -170,13 +170,13 @@ def QA_check(QA_Response):
     # Parse the JSON string into a dictionary
     data = json.loads(QA_Response)
     
-    if ( data['relevance_to_CCSS_standard'] < 3 or 
-        data['relevance_to_topic_of_interest'] < 3 or
-        data['question_clarity_and_complexity'] < 3 or 
-        data['rubric_quality'] < 3 or 
-        data['creativity_and_engagement'] < 3 or 
-        data['bias_and_sensitivity'] < 3 or 
-        data['overall_quality'] < 3 ):
+    if ( data['relevance_to_CCSS_standard'] < 5 or 
+        data['relevance_to_topic_of_interest'] < 5 or
+        data['question_clarity_and_complexity'] < 5 or 
+        data['rubric_quality'] < 5 or 
+        data['creativity_and_engagement'] < 5 or 
+        data['bias_and_sensitivity'] < 5 or 
+        data['overall_quality'] < 5 ):
         QA_result="Fail"
     else:
         QA_result="Pass"
@@ -190,7 +190,7 @@ def QA_check(QA_Response):
     
 
     # Drop the table named 'questions'
-    cursor.execute('DROP TABLE IF EXISTS questions')
+    #cursor.execute('DROP TABLE IF EXISTS questions')
 
     # Create a table to store the AI tool's output
     cursor.execute('''
