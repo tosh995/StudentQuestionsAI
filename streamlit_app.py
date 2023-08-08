@@ -263,7 +263,7 @@ def start_generate():
         QA_result=""       
         QA_response=""
         generate_question()
-        st.session_state.reset = True
+        st.stop()
         st.markdown("### Your Question(s):")
         #st.write(QA_response)
         #st.write (counter)
