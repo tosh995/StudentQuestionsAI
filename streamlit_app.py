@@ -267,4 +267,4 @@ def generate():
         st.write (counter)
         st.write(output_questions)
  
-st.button("Generate Question", type='secondary', help="Click to generate a question", on_click=generate)
+st.button("Generate Question", help="Click to generate a question", on_click=generate)
