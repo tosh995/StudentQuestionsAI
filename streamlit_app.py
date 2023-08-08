@@ -184,7 +184,7 @@ if topic_input:
             data['bias_and_sensitivity'] < 3 or 
             data['overall_quality'] < 3 ):
             data['QA_result']="Fail"
-        Else:
+        Else
             data['QA_result']="Pass"
 
         # Connect to SQLite database (or create it if it doesn't exist)
