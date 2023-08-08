@@ -7,14 +7,14 @@ from langchain.llms import OpenAI
 api_key = st.secrets["api_key"]
 
 template = """
-    You are a tutor. Take the following topic of interest from the student and the common core learning standard and create one free response question(FRQ) for the student. 
+    You are a tutor. Take the following topic of interest from the student and the common core learning standard and create one free response question for the student. 
     
-    The FRQ should meet the following criteria:
-        1. FRQ should assess the student’s knowledge of the Common Core learning standard
-        2. FRQ should have the context required to answer the FRQ. 
+    The Question should meet the following criteria:
+        1. Question should assess the student’s knowledge of the Common Core learning standard
+        2. Question should have the context required to answer it. 
         3. Assume that the student will be viewing the question and the student is not familiar with the details of the learning standard. So provide any additional context to the question.
         
-    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide rubric in a tabular format. Do not provide any feedback.
+    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide rubric in a tabular format. Do not provide any feedback. Call the rubric as "How you will be evaluated". Keep rubric limited to 100 words.
 
     TOPIC: {topic}
     STANDARD: {standard}
@@ -95,7 +95,7 @@ standard_template = """Is {standard} a valid CCSS standard? Answer only YES or N
 
     
 counter=0
-output_questions=""
+output_question=""
 QA_result=""       
 QA_response=""
 
@@ -156,7 +156,7 @@ def get_answer():
 
 def generate_question():
     global counter
-    global output_questions
+    global output_question
     global QA_response
     global option_count
     global standard_input
@@ -164,8 +164,8 @@ def generate_question():
     counter += 1
     llm = load_LLM(openai_api_key=api_key)
     prompt_with_inputs = prompt.format(topic=topic_input,standard=standard_input)
-    output_questions = llm(prompt_with_inputs)
-    QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=standard_input,output=output_questions)
+    output_question = llm(prompt_with_inputs)
+    QA_prompt_with_inputs = QA_prompt.format(topic=topic_input,standard=standard_input,output=output_question)
     QA_response = llm(QA_prompt_with_inputs)
     QA_check(QA_response=QA_response)
 
@@ -258,7 +258,7 @@ def start_generate():
     global topic_input
     global standard_input
     global counter
-    global output_questions
+    global output_question
     global QA_result   
     global QA_response
     if topic_input:
@@ -266,22 +266,22 @@ def start_generate():
             st.warning('Please enter a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
             st.stop()
         counter=0
-        output_questions=""
+        output_question=""
         QA_result=""       
         QA_response=""
         generate_question()
         st.header("AI Questions Generator")
-        st.markdown("### Your Question(s):")
+        st.markdown("### Your Question:")
         #st.write(QA_response)
         #st.write (counter)
-        st.write(output_questions)
+        st.write(output_question)
         input_answer=get_answer()
         st.stop()
 
 def load_first_input_page():
     global topic_input 
     global counter
-    global output_questions
+    global output_question
     global QA_response
     global option_count
     global standard_input
