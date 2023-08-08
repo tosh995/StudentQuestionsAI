@@ -283,13 +283,14 @@ def load_first_input_page():
         st.stop()
 
 
+    col3, col4 = st.columns(2)
+    
+    with col3:
+        st.button("Generate Question",type='secondary', help="Click to generate a question", on_click=start_generate)
 
-    st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
+    with col4:
+        st.button("Reset", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
-      
-     
-     
-    st.button("Generate Question", help="Click to generate a question", on_click=start_generate)
 
 
 if counter == 0: 
