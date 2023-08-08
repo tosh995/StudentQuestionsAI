@@ -151,14 +151,6 @@ def update_text_with_example():
 st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
 
-if topic_input:
-    if not option_standard:
-        st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
-        st.stop()
-
-    counter=0
-    output_questions=""
-    QA_result=""
     
     def generate_question():
         global counter
@@ -174,7 +166,7 @@ if topic_input:
     
     
     def QA_check(QA_Response):
-        
+        global QA_result
         # Parse the JSON string into a dictionary
         data = json.loads(QA_Response)
         
@@ -185,10 +177,11 @@ if topic_input:
             data['creativity_and_engagement'] < 3 or 
             data['bias_and_sensitivity'] < 3 or 
             data['overall_quality'] < 3 ):
-            data['QA_result']="Fail"
+            QA_result="Fail"
         else:
-            data['QA_result']="Pass"
-
+            QA_result="Pass"
+        data['QA_result'] = QA_result
+        st.write(QA_result)
         # Connect to SQLite database (or create it if it doesn't exist)
         conn = sqlite3.connect('QA_Response.db')
 
@@ -250,11 +243,18 @@ if topic_input:
         If (data['QA_result']=="Fail" and counter<3)
             generate_question()
 
-    
+
+
+if topic_input:
+    if not option_standard:
+        st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
+        st.stop()
+    counter=0
+    output_questions=""
+    QA_result=""            
     generate_question()
     st.markdown("### Your Question(s):")
     st.write(QA_Response)
     st.write (counter)
     st.write(output_questions)
-    
-    
+ 
