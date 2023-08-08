@@ -187,6 +187,10 @@ def QA_check(QA_Response):
 
     # Create a cursor object to execute SQL commands
     cursor = conn.cursor()
+    
+
+    # Drop the table named 'questions'
+    cursor.execute('DROP TABLE IF EXISTS questions')
 
     # Create a table to store the AI tool's output
     cursor.execute('''
