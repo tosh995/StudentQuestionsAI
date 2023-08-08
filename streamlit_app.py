@@ -282,4 +282,4 @@ QA_response=""
  
  
  
-st.button("Generate Question", help="Click to generate a question", on_click=gene_rate())
+st.button("Generate Question", help="Click to generate a question", on_click=gene_rate)
