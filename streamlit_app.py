@@ -150,7 +150,11 @@ def update_text_with_example():
 
 st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
-
+ 
+counter=0
+output_questions=""
+QA_result=""       
+QA_response=""
     
 def generate_question():
     global counter
