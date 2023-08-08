@@ -268,7 +268,7 @@ def start_generate():
         #st.write(QA_response)
         #st.write (counter)
         st.write(output_questions)
-        #st.stop()
+        st.stop()
 
 def load_first_input_page():
     global topic_input 
