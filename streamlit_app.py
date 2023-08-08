@@ -119,7 +119,7 @@ st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
 st.header("AI Questions Generator")
 
 
-st.markdown("I am an AI Question Generator Tool for 4th grade students. I take a student's topic of interest and Common Core Learning Standard as inputs and generate up to 5 open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
+st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate up to 5 open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
 
 
 st.markdown("## Enter your preferences")
@@ -250,17 +250,21 @@ def QA_check(QA_Response):
 
 
 
-if topic_input:
-    if not option_standard:
-        st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
-        st.stop()
-    counter=0
-    output_questions=""
-    QA_result=""       
-    QA_response=""
-    generate_question()
-    st.markdown("### Your Question(s):")
-    st.write(QA_Response)
-    st.write (counter)
-    st.write(output_questions)
+st.button("Generate", type='secondary', help="Click to generate a question", on_click=generate)
+
+def generate():
+    #st.session_state.topic_input = "basketball"
+    if topic_input:
+        if not option_standard:
+            st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
+            st.stop()
+        counter=0
+        output_questions=""
+        QA_result=""       
+        QA_response=""
+        generate_question()
+        st.markdown("### Your Question(s):")
+        st.write(QA_Response)
+        st.write (counter)
+        st.write(output_questions)
  
