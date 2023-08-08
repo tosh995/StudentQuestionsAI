@@ -226,7 +226,7 @@ def QA_check(QA_response):
 
 
 def load_first_input_page():
-
+    global topic_input 
 
     st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
     st.header("AI Questions Generator")
@@ -265,6 +265,7 @@ def load_first_input_page():
 
 
 def start_generate():
+    global topic_input
     if topic_input:
         if not option_standard:
             st.warning('Please select a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
