@@ -313,7 +313,7 @@ def start_generate():
         #st.write(question_QA_response)
         #st.write (counter)
         st.write(output_question)
-        #input_answer=get_answer()
+        input_answer=get_answer()
         #return
         st.stop()
 
