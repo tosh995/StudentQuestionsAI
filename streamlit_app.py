@@ -237,14 +237,14 @@ def question_QA_check(question_QA_response):
     
     
     # Read the contents of the 'questions' table into a Pandas DataFrame
-    #query = "SELECT * FROM questions"
-    #df = pd.read_sql(query, conn)
+    query = "SELECT * FROM questions"
+    df = pd.read_sql(query, conn)
 
     # Display the DataFrame using Streamlit
-    #st.write("Contents of the 'questions' table:")
-    #st.dataframe(df)
+    st.write("Contents of the 'questions' table:")
+    st.dataframe(df)
     # Drop the table named 'questions'
-    cursor.execute('DROP TABLE IF EXISTS questions')
+    #cursor.execute('DROP TABLE IF EXISTS questions')
 
     # Create a table to store the AI tool's output
     cursor.execute('''
