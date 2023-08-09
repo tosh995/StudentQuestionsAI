@@ -140,13 +140,7 @@ def get_topic():
 
 
 def get_standard():
-    input_standard = st.text_input(label="Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W) would you like to test?", placeholder="Example: CCSS.ELA-LITERACY.W.4.1 etc....", key="standard_input")
-    standard_prompt_with_inputs = standard_prompt.format(standard=input_standard)
-    standard_response = llm(standard_prompt_with_inputs)
-    if standard_response == "No" or standard_response == "NO" or standard_response == "No." or standard_response == "NO." :
-        st.write("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.")
-        st.stop()
-    else:     
+    input_standard = st.text_input(label="Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W) would you like to test?", placeholder="Example: CCSS.ELA-LITERACY.W.4.1 etc....", key="standard_input")     
         return input_standard
 
 def get_answer():
@@ -266,6 +260,11 @@ def start_generate():
     if topic_input:
         if not standard_input:
             st.warning('Please enter a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
+            st.stop()
+        standard_prompt_with_inputs = standard_prompt.format(standard=input_standard)
+        standard_response = llm(standard_prompt_with_inputs)
+        if standard_response == "No" or standard_response == "NO" or standard_response == "No." or standard_response == "NO." :
+            st.write("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.")
             st.stop()
         counter=0
         output_question=""
