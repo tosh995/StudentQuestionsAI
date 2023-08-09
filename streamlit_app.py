@@ -145,7 +145,7 @@ def get_standard():
     if standard_response == "No" or standard_response == "No.":
         st.write("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.")
         st.stop()
-    else     
+    else:     
         return input_standard
 
 def get_answer():
