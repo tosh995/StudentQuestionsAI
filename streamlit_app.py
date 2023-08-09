@@ -3,6 +3,7 @@ import sqlite3
 import json
 from langchain import PromptTemplate
 from langchain.llms import OpenAI
+import pandas as pd
 
 api_key = st.secrets["api_key"]
 st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
@@ -69,6 +70,12 @@ question_QA_template = """
         "question_topic": "France",
         "CCSS_standard" : "CCSS.ELA-LITERACY.W.4.1"
         "question_text": "What is the capital of France?",
+        "rubric_text": " How you will be evaluated:
+        Use of at least three different types of figurative language (similes, metaphors, personification)
+        Accurate explanation of each type of figurative language used
+        Clear and effective description of the player's skills and abilities
+        Coherent organization and logical flow in the paragraph
+        Correct grammar, punctuation, and spelling"
         "relevance_to_CCSS_standard": 5,
         "relevance_to_topic_of_interest": 4,
         "question_clarity_and_complexity": 3,
@@ -139,7 +146,7 @@ question_QA_result=""
 question_QA_response=""
 llm = load_LLM(openai_api_key=api_key)
 
-prompt = PromptTemplate(
+question_prompt = PromptTemplate(
     input_variables=["topic", "standard"],
     template=template
 )
@@ -157,7 +164,7 @@ standard_prompt = PromptTemplate(
 )
 
 
-answer_prompt = PromptTemplate(
+answer_feedback_prompt = PromptTemplate(
     input_variables=["question","answer"],
     template=answer_template
 )
@@ -198,7 +205,7 @@ def generate_question():
     global standard_input
     global topic_input
     counter += 1
-    prompt_with_inputs = prompt.format(topic=topic_input,standard=standard_input)
+    prompt_with_inputs = question_prompt.format(topic=topic_input,standard=standard_input)
     output_question = llm(prompt_with_inputs)
     question_QA_prompt_with_inputs = question_QA_prompt.format(topic=topic_input,standard=standard_input,output=output_question)
     question_QA_response = llm(question_QA_prompt_with_inputs)
@@ -228,7 +235,14 @@ def question_QA_check(question_QA_response):
     # Create a cursor object to execute SQL commands
     cursor = conn.cursor()
     
+    
+    # Read the contents of the 'questions' table into a Pandas DataFrame
+    query = "SELECT * FROM questions"
+    df = pd.read_sql(query, conn)
 
+    # Display the DataFrame using Streamlit
+    st.write("Contents of the 'questions' table:")
+    st.dataframe(df)
     # Drop the table named 'questions'
     #cursor.execute('DROP TABLE IF EXISTS questions')
 
@@ -238,6 +252,7 @@ def question_QA_check(question_QA_response):
         question_topic TEXT,
         CCSS_standard TEXT,
         question_text TEXT,
+        rubric_text TEXT,
         relevance_to_CCSS_standard INTEGER,
         relevance_to_topic_of_interest INTEGER,
         question_clarity_and_complexity INTEGER,
@@ -256,6 +271,7 @@ def question_QA_check(question_QA_response):
         question_topic,
         CCSS_standard,
         question_text,
+        rubric_text,
         relevance_to_CCSS_standard,
         relevance_to_topic_of_interest,
         question_clarity_and_complexity,
@@ -270,6 +286,7 @@ def question_QA_check(question_QA_response):
         data['question_topic'],
         data['CCSS_standard'],
         data['question_text'],
+        data['rubric_text'],
         data['relevance_to_CCSS_standard'],
         data['relevance_to_topic_of_interest'],
         data['question_clarity_and_complexity'],
@@ -314,6 +331,7 @@ def start_generate():
         #st.write (counter)
         st.write(output_question)
         input_answer=get_answer()
+        
         #return
         st.stop()
 
