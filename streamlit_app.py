@@ -7,14 +7,12 @@ from langchain.llms import OpenAI
 api_key = st.secrets["api_key"]
 
 template = """
-    You are a tutor. Take the following topic of interest from the student and the common core learning standard and create one free response question for the student. 
-    
-    The Question should meet the following criteria:
-        1. Question should assess the student’s knowledge of the Common Core learning standard
+    You are a great tutor. Take the following topic of interest from the student and the common core learning standard and create one free response question for the student. The Question should meet the following criteria:
+        1. Question should assess the student’s knowledge of the Common Core learning standard given.
         2. Question should have the context required to answer it. 
-        3. Assume that the student will be viewing the question and the student is not familiar with the details of the learning standard. So provide any additional context to the question.
+        3. Assume that the student will be viewing the question and the student is not familiar with the details of the learning standard. So provide any additional context required for answering the question effectively.
         
-    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide rubric in a tabular format. Do not provide any feedback. Call the rubric as "How you will be evaluated". Keep rubric limited to 100 words.
+    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide rubric in a tabular format. Do not provide any feedback. Title the rubric as "How you will be evaluated". Keep rubric limited to 60 words.
 
     TOPIC: {topic}
     STANDARD: {standard}
