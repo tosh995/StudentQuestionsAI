@@ -97,7 +97,7 @@ answer_template = """You are the world best writing grader who is evaluating the
 
 {question}
 
-Review the following writing by the student  and provide feedback to the student that is easily understandable by the student, and that gives them steps to improve on areas they need to work on. Also, rewrite the student's writing as part of the feedback to show what a great writing would look like. If the student did a great job, no need to rewrite and just give the feedback to the student. If you feel that the student needs to resubmit the writing, suggest the student do so. After that, separately, evaluate your feedback for clarity, constructiveness, Actionability and Supportiveness on a scale of 0-10 for quality assurance purposes. If you score your feedback less than 9, then re-write your feedback. Here below is a sample feedback for reference. Only provide the feedback as it will be sent to the student directly. Don't include any other information in your response. 
+Review the following writing by the student  and provide feedback to the student that is easily understandable by the student, and that gives them steps to improve on areas they need to work on. Also, rewrite the student's writing as part of the feedback to show what a great writing would look like. If the student did a great job, no need to rewrite and just give the feedback to the student. If you feel that the student needs to resubmit the writing, suggest the student do so. After that, separately, evaluate your feedback for clarity, constructiveness, Actionability and Supportiveness on a scale of 0-10 for quality assurance purposes. If you score your feedback less than 9, then re-write your feedback. Here below is a sample feedback for reference. Only provide the feedback in your response/completion as it will be sent to the student directly. Don't include any other information in your response. 
 
 
 “Hello,
@@ -314,6 +314,7 @@ def start_generate():
         #st.write (counter)
         st.write(output_question)
         input_answer=get_answer()
+        return
         #st.stop()
 
 def load_first_input_page():
