@@ -90,6 +90,11 @@ QA_template = """
 
 standard_template = """Is {standard} a valid CCSS standard? Answer only YES or NO."""
 
+
+def load_LLM(openai_api_key):
+    """Logic for loading the chain"""
+    llm = OpenAI(model_name="gpt-3.5-turbo",temperature=0.6, openai_api_key=openai_api_key)
+    return llm
     
 counter=0
 output_question=""
@@ -115,10 +120,6 @@ standard_prompt = PromptTemplate(
 )
 
 
-def load_LLM(openai_api_key):
-    """Logic for loading the chain"""
-    llm = OpenAI(model_name="gpt-3.5-turbo",temperature=0.6, openai_api_key=openai_api_key)
-    return llm
 
 def reset_question_input_page():
     st.session_state.topic_input = ""
