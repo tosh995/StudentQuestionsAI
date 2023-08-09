@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 
 # Connect to SQLite database
-conn = sqlite3.connect('ai_tool_output.db')
+conn = sqlite3.connect('question_QA_response.db')
 
 # Read the contents of the 'questions' table into a Pandas DataFrame
 query = "SELECT * FROM questions"
