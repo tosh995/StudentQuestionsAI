@@ -281,7 +281,7 @@ def question_QA_check(question_QA_response):
         overall_quality,
         question_QA_result,
         evaluated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
     ''', (
         data['question_topic'],
         data['CCSS_standard'],
