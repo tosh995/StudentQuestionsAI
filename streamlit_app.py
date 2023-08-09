@@ -83,7 +83,6 @@ question_QA_template = """
         "creativity_and_engagement": 5,
         "bias_and_sensitivity": 4,
         "overall_quality": 3
-        "evaluated_at": "2023-08-07T12:34:56"
         
 
 
@@ -295,7 +294,7 @@ def question_QA_check(question_QA_response):
         data['bias_and_sensitivity'],
         data['overall_quality'],
         data['question_QA_result'],
-        data['evaluated_at']
+        datetime.now()
     ))
 
     # Commit the changes and close the connection
