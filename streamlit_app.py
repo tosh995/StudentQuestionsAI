@@ -12,7 +12,7 @@ template = """
         2. Question should have the context required to answer it. 
         3. Assume that the student will be viewing the question and the student is not familiar with the details of the learning standard. So provide any additional context required for answering the question effectively.
         
-    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide rubric in a tabular format. Do not provide any feedback. Title the rubric as "How you will be evaluated". Keep rubric limited to 60 words.
+    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide rubric in a tabular format. Do not provide any feedback. Title the rubric as "How you will be evaluated". Keep rubric limited to 100 words.
 
     TOPIC: {topic}
     STANDARD: {standard}
