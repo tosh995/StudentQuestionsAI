@@ -268,7 +268,7 @@ def start_generate():
         standard_prompt_with_inputs = standard_prompt.format(standard=standard_input)
         standard_response = llm(standard_prompt_with_inputs)
         if standard_response == "No" or standard_response == "NO" or standard_response == "No." or standard_response == "NO." :
-            st.warning("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",, icon="⚠️")
+            st.warning("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",icon="⚠️")
             return
             #load_first_input_page()
             #st.stop()
