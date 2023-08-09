@@ -260,12 +260,14 @@ def start_generate():
     if topic_input:
         if not standard_input:
             st.warning('Please enter a writing standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
-            st.stop()
+            load_first_input_page()
+            #st.stop()
         standard_prompt_with_inputs = standard_prompt.format(standard=standard_input)
         standard_response = llm(standard_prompt_with_inputs)
         if standard_response == "No" or standard_response == "NO" or standard_response == "No." or standard_response == "NO." :
             st.write("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.")
-            st.stop()
+            load_first_input_page()
+            #st.stop()
         counter=0
         output_question=""
         QA_result=""       
