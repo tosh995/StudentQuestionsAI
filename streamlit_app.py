@@ -313,9 +313,9 @@ def start_generate():
         #st.write(question_QA_response)
         #st.write (counter)
         st.write(output_question)
-        input_answer=get_answer()
-        return
-        #st.stop()
+        #input_answer=get_answer()
+        #return
+        st.stop()
 
 def load_first_input_page():
     global topic_input 
