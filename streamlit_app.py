@@ -141,7 +141,7 @@ def get_topic():
 
 def get_standard():
     input_standard = st.text_input(label="Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W) would you like to test?", placeholder="Example: CCSS.ELA-LITERACY.W.4.1 etc....", key="standard_input")     
-        return input_standard
+    return input_standard
 
 def get_answer():
     input_answer = st.text_area(label="Your Answer", placeholder="Type your response here...3000 words max", key="answer_input", height=500)
