@@ -5,6 +5,8 @@ from langchain import PromptTemplate
 from langchain.llms import OpenAI
 
 api_key = st.secrets["api_key"]
+st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
+
 
 template = """
     You are a great tutor. Take the following topic of interest from the student and the common core learning standard and create one free response question for the student. The Question should meet the following criteria:
@@ -289,7 +291,6 @@ def load_first_input_page():
     global option_count
     global standard_input
     global topic_input
-    st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
     st.header("AI Questions Generator")
 
 
