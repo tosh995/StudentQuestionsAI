@@ -310,6 +310,8 @@ def db_insert_question(question_QA_response):
     #global topic
     #global CCSS_standard
     global question_last_id
+    data = json.loads(question_QA_response)
+
     #global question
     # st.write("Attempt Number " + str(counter) + " " + question_QA_result)
     # Connect to SQLite database (or create it if it doesn't exist)
@@ -432,9 +434,11 @@ def db_insert_answer():
 
 
 #function to load the feedback into the feedback table
-def db_insert_feedback():
+def db_insert_feedback(feedback_QA_response):
     global question_last_id
     global answer_last_id
+    data = json.loads(feedback_QA_response)
+
     conn = sqlite3.connect('studentquestionsai.db')
 
     # Create a cursor object to execute SQL commands
@@ -488,7 +492,7 @@ def db_insert_feedback():
         data['constructiveness_and_encouragement'], 
         data['accuracy_and_fairness'],
         data['overall_quality'],
-        feedback_QA_result,
+        data['feedback_QA_result'],
         datetime.now()
     ))
     # Commit the changes and close the connection
@@ -643,7 +647,7 @@ def feedback_QA_check(feedback_QA_response):
     else:
         feedback_QA_result="Pass"
     data['feedback_QA_result'] = feedback_QA_result
-    db_insert_feedback()
+    db_insert_feedback(feedback_QA_response)
     if (data['feedback_QA_result']=="Fail" and feedback_QA_counter<max_feedback_QA_counter):
         generate_feedback()
 
