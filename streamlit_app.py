@@ -573,27 +573,12 @@ def load_question_display():
         st.write(st.session_state.question)
         #st.session_state.answer=get_answer()
         #load_question_display()
-        st.session_state.answer = st.text_area(label=" ",on_change=False, placeholder="Type your response here...2000 words max", key="answer_input", height=500)
+        st.session_state.answer = st.text_area(label=" ",on_change=None, placeholder="Type your response here...2000 words max", key="answer_input", height=500)
         #if len(input_answer.split(" ")) > 2000:
             #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
 
 
-#first function that loads the welcome screen for the tool
-def load_welcome_page():
-    st.session_state.session_status='Topic Input'
-    st.header("AI Questions Generator1")
-    st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
-    st.markdown("## Enter your preferences")
-    st.session_state.CCSS_standard = get_CCSS_standard()
-    st.session_state.topic = get_topic()
-    col3, col4, col5 = st.columns(3)    
-    with col3:
-        st.button("Generate Question",type='secondary', help="Click to generate a question", on_click=generate_question_button_click)
-    with col4:
-        st.button("Reset", type='secondary', help="Click to reset the page", on_click=reset_question_input_page)
-    with col5:
-        st.button("Default", type='secondary', help="Click to use default values", on_click=default_question_input_page)
 
 
 #function to respond to submission of the feedback_QA_counter Answer by the student on clicking the submit button 
@@ -609,7 +594,6 @@ def generate_feedback_button_click():
         #start the feedback process
         st.session_state.feedback_QA_counter =0
         generate_feedback()
-        
         
         
         
@@ -663,6 +647,22 @@ def load_feedback_display():
     #return
     #st.stop()
     
+#first function that loads the welcome screen for the tool
+def load_welcome_page():
+    st.session_state.session_status='Topic Input'
+    st.header("AI Questions Generator1")
+    st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
+    st.markdown("## Enter your preferences")
+    st.session_state.CCSS_standard = get_CCSS_standard()
+    st.session_state.topic = get_topic()
+    col3, col4, col5 = st.columns(3)    
+    with col3:
+        st.button("Generate Question",type='secondary', help="Click to generate a question", on_click=generate_question_button_click)
+    with col4:
+        st.button("Reset", type='secondary', help="Click to reset the page", on_click=reset_question_input_page)
+    with col5:
+        st.button("Default", type='secondary', help="Click to use default values", on_click=default_question_input_page)
+
    
 
         
