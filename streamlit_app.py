@@ -366,7 +366,7 @@ def db_insert_question(question_QA_response,question_QA_result):
         overall_quality,
         question_QA_result,
         load_date_time
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)
     ''', (
         data['topic'],
         data['CCSS_standard'],
