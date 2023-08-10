@@ -542,7 +542,7 @@ def question_QA_check(question_QA_response):
 
 #process to generate question starts on clining the generate question button 
 def generate_question_button_click():
-    if topic:
+    if st.session_state.topic:
         if not st.session_state.CCSS_standard:
             st.warning('Please enter a writing CCSS standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
             return
