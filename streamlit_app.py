@@ -644,8 +644,8 @@ def feedback_QA_check(feedback_QA_response):
         feedback_QA_result="Pass"
     data['feedback_QA_result'] = feedback_QA_result
     db_insert_feedback()
-        if (data['feedback_QA_result']=="Fail" and feedback_QA_counter<max_feedback_QA_counter):
-    generate_feedback()
+    if (data['feedback_QA_result']=="Fail" and feedback_QA_counter<max_feedback_QA_counter):
+        generate_feedback()
 
     
     
