@@ -288,18 +288,18 @@ feedback_QA_prompt = PromptTemplate(
 
 #function to reset the input screen
 def reset_question_input_page():
-    st.session_state.topic = ""
-    st.session_state.CCSS_standard = ""
+    st.session_state.topic1 = ""
+    st.session_state.CCSS_standard1 = ""
     
 #function to apply default values to input screen, facilitates testing and development
 def default_question_input_page():
-    st.session_state.topic = "Baseball"
-    st.session_state.CCSS_standard = "CCSS.ELA-LITERACY.W.4.9"   
+    st.session_state.topic1 = "Baseball"
+    st.session_state.CCSS_standard1 = "CCSS.ELA-LITERACY.W.4.9"   
     st.write("Default Updated")
 
 #function to get topic from the input screen
 def get_topic():
-    input_topic = st.text_input(label="Topic of Interest", placeholder="Example: vacation, basketball, dog etc....", key="topic")
+    input_topic = st.text_input(label="Topic of Interest", placeholder="Example: vacation, basketball, dog etc....", key="topic1")
     if len(input_topic.split(" ")) > 6:
         st.write("Please enter a shorter topic. The maximum length is 6 words.")
         st.stop()
@@ -307,7 +307,7 @@ def get_topic():
 
 #function to get the CCSS Standard from the input screen
 def get_CCSS_standard():
-    input_CCSS_standard = st.text_input(label="Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W) would you like to test?", placeholder="Example: CCSS.ELA-LITERACY.W.4.1 etc....", key="CCSS_standard")     
+    input_CCSS_standard = st.text_input(label="Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W) would you like to test?", placeholder="Example: CCSS.ELA-LITERACY.W.4.1 etc....", key="CCSS_standard1")     
     return input_CCSS_standard
 
 
