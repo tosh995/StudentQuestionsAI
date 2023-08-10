@@ -581,17 +581,7 @@ def load_question_display():
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
 
 def load_question_display1():        
-        st.header("AI Questions Generator")
-        st.markdown("### Your Question:")
-        #st.write(question_QA_response)
-        #st.write (counter)
-        st.write(st.session_state.question)
-        #st.session_state.answer=get_answer()
-        #load_question_display()
-        st.session_state.answer = st.text_area(label=" ", on_change=load_question_display, placeholder="Type your response here...2000 words max", height=500)
-        #if len(input_answer.split(" ")) > 2000:
-            #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
-        st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
+        return
 
 
 #function to respond to submission of the feedback_QA_counter Answer by the student on clicking the submit button 
@@ -667,7 +657,7 @@ def load_welcome_page_initiator():
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
     st.session_state.session_status='Topic Input'
-    st.header("AI Questions Generator1")
+    st.header("AI Questions Generator")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
