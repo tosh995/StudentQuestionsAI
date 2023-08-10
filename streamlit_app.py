@@ -633,7 +633,7 @@ def feedback_QA_check(feedback_QA_response):
     #data = json.loads(feedback_QA_response) 
     if ( data['relevance_to_students_response'] < 4 or 
         data['alignment_with_CCSS_standard'] < 4 or
-        data['clarity_and_understadability'] < 4 or 
+        data['clarity_and_understandability'] < 4 or 
         data['constructiveness_and_encouragement'] < 4 or 
         data['accuracy_and_fairness'] < 4 or 
         data['overall_quality'] < 4 ): 
@@ -669,7 +669,7 @@ def load_welcome_page_initiator():
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
     st.session_state.session_status='Topic Input'
-    st.header("AI Questions Generator1")
+    st.header("AI Questions Generator")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
