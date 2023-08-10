@@ -570,9 +570,12 @@ def generate_question_button_click():
         #st.write(question_QA_response)
         #st.write (counter)
         st.write(question)
-        input_answer=get_answer()
+        #input_answer=get_answer()
+        input_answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
+        if len(input_answer.split(" ")) > 2000:
+            st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
-        return
+        #return
         #st.stop()
 
 #first function that loads the welcome screen for the tool
