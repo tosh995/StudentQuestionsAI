@@ -254,7 +254,7 @@ if 'answer_last_id' not in st.session_state:
     st.session_state.answer_last_id = ""    
 
 if "session_status" not in st.session_state:
-    st.session_state.session_status='Topic Input'
+    st.session_state.session_status='Start'
 
 
 llm = load_LLM(openai_api_key=api_key)
@@ -652,7 +652,7 @@ def load_feedback_display():
 
 
         
-if st.session_state.session_status == '': 
+if st.session_state.session_status == 'Start': 
     load_welcome_page()
 #elif st.session_state.session_status=='Answer Input':
     load_question_display()
