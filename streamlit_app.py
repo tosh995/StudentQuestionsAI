@@ -231,10 +231,10 @@ if 'max_question_QA_counter' not in st.session_state:
 if 'max_feedback_QA_counter' not in st.session_state:    
     st.session_state.max_feedback_QA_counter=3
 
-if 'topic' not in st.session_state:
-    st.session_state.topic = ""
-if 'CCSS_standard' not in st.session_state:
-    st.session_state.CCSS_standard = ""
+#if 'topic' not in st.session_state:
+#    st.session_state.topic = ""
+#if 'CCSS_standard' not in st.session_state:
+#    st.session_state.CCSS_standard = ""
 if 'question' not in st.session_state:
     st.session_state.question = ""
 if 'question_QA_result' not in st.session_state:
