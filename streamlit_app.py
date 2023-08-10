@@ -534,7 +534,7 @@ def question_QA_check(question_QA_response):
     else:
         question_QA_result="Pass"
     data['question_QA_result'] = question_QA_result
-   db_insert_question(question_QA_response) #load the question with its QA information to Question table
+    db_insert_question(question_QA_response) #load the question with its QA information to Question table
    
    #continue generating question if the QA fails until we reach the max limit 
     if (data['question_QA_result']=="Fail" and question_QA_counter<max_question_QA_counter):
