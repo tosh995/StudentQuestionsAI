@@ -551,6 +551,7 @@ def generate_question_button_click():
         st.session_state.CCSS_standard_response = llm(CCSS_standard_prompt_with_inputs)
         if st.session_state.CCSS_standard_response == "No" or st.session_state.CCSS_standard_response == "NO" or st.session_state.CCSS_standard_response == "No." or st.session_state.CCSS_standard_response == "NO." :
             st.warning("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",icon="⚠️")
+            st.write(st.session_state.CCSS_standard_response)
             return
         st.session_state.question_QA_counter=0
         st.session_state.question=""
@@ -592,6 +593,7 @@ def load_welcome_page():
 def generate_feedback_button_click():
     st.session_state.session_status='Show Feedback'
     if st.session_state.answer:
+        st.write(st.session_state.answer)
         #load the answer into the answer table
         db_insert_answer()  
         #start the feedback process
