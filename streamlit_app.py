@@ -458,29 +458,22 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
     cursor = conn.cursor()
     
     # Read the contents of the 'questions' table into a Pandas DataFrame
-    query = "SELECT * FROM feedback"
-    df = pd.read_sql(query, conn)
+    #query = "SELECT * FROM feedback"
+    #df = pd.read_sql(query, conn)
 
     # Display the DataFrame using Streamlit
-    st.write("Contents of the 'questions' table:")
-    st.dataframe(df)
+    #st.write("Contents of the 'questions' table:")
+    #st.dataframe(df)
     # Drop the table named 'feedback'
     cursor.execute('DROP TABLE IF EXISTS feedback')
 
-# Read the contents of the 'questions' table into a Pandas DataFrame
-    query = "SELECT * FROM feedback"
-    df = pd.read_sql(query, conn)
-
-    # Display the DataFrame using Streamlit
-    st.write("Contents of the 'questions' table:")
-    st.dataframe(df)
     
 
     # Create a table to store the feedback and its QA information
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS feedback (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        question_id INTEGER 
+        question_id INTEGER,
         answer_id INTEGER,
         feedback TEXT,
         relevance_to_students_response INTEGER,
