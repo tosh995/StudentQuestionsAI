@@ -77,7 +77,7 @@ question_QA_template = """
         Accurate explanation of each type of figurative language used
         Clear and effective description of the player's skills and abilities
         Coherent organization and logical flow in the paragraph
-        Correct grammar, punctuation, and spelling"
+        Correct grammar, punctuation, and spelling",
         "relevance_to_CCSS_standard": 5,
         "relevance_to_topic_of_interest": 4,
         "question_clarity_and_complexity": 3,
