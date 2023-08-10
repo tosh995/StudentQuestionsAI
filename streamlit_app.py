@@ -551,6 +551,7 @@ def generate_question_button_click():
     global question
     global question_QA_result   
     global question_QA_response
+    global answer
     if topic:
         if not CCSS_standard:
             st.warning('Please enter a writing CCSS standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
@@ -571,9 +572,9 @@ def generate_question_button_click():
         #st.write (counter)
         st.write(question)
         #input_answer=get_answer()
-        input_answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
-        if len(input_answer.split(" ")) > 2000:
-            st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
+        answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
+        #if len(input_answer.split(" ")) > 2000:
+            #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
         #return
         #st.stop()
@@ -600,8 +601,10 @@ def load_welcome_page():
         st.button("Default", type='secondary', help="Click to use default values", on_click=default_question_input_page)
 
 
-#function to respond to submission of the Answer by the student on clicking the submit button 
+#function to respond to submission of the feedback_QA_counter Answer by the student on clicking the submit button 
 def generate_feedback_button_click():
+    global feedback_QA_counter
+    global answer
     if answer:
         #load the answer into the answer table
         db_insert_answer()  
@@ -658,8 +661,8 @@ def feedback_QA_check(feedback_QA_response):
     st.write(question)
     st.write(feedback)
     st.button("Get Another Question", help="Click to get another question", on_click=load_welcome_page)
-    return
-    st.stop()
+    #return
+    #st.stop()
     
     
 
