@@ -559,6 +559,10 @@ def generate_question_button_click():
         st.session_state.question_QA_response=""
         generate_question()
         st.session_state.session_status='Answer Input'
+        load_question_display()
+        
+        
+def load_question_display():        
         st.header("AI Questions Generator")
         st.markdown("### Your Question:")
         #st.write(question_QA_response)
@@ -569,8 +573,7 @@ def generate_question_button_click():
         #if len(input_answer.split(" ")) > 2000:
             #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
-        #return
-        st.stop()
+
 
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
@@ -648,3 +651,5 @@ def feedback_QA_check(feedback_QA_response):
         
 if st.session_state.session_status == 'Topic Input': 
     load_welcome_page()
+else if  st.session_state.session_status=='Answer Input':
+    load_question_display()
