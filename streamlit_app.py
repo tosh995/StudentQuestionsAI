@@ -572,8 +572,8 @@ def generate_question_button_click():
         st.write(question)
         input_answer=get_answer()
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
-        #return
-        st.stop()
+        return
+        #st.stop()
 
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
@@ -648,7 +648,15 @@ def feedback_QA_check(feedback_QA_response):
     db_insert_feedback(feedback_QA_response,feedback_QA_result)
     if (feedback_QA_result=="Fail" and feedback_QA_counter<max_feedback_QA_counter):
         generate_feedback()
-
+    st.header("AI Questions Generator")
+    st.markdown("### Your Question:")
+    #st.write(question_QA_response)
+    st.write (feedback_QA_counter)
+    st.write(question)
+    st.write(feedback)
+    st.button("Get Another Question", help="Click to get another question", on_click=load_welcome_page)
+    return
+    st.stop()
     
     
 
