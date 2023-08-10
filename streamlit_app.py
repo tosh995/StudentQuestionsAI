@@ -598,9 +598,10 @@ def generate_feedback_button_click():
     st.write(st.session_state.session_status)
     st.write(st.session_state.answer)
     if st.session_state.answer:
-        st.write(st.session_state.answer)
+        #st.write(st.session_state.answer)
         #load the answer into the answer table
         db_insert_answer()  
+        st.write("db insert complete")
         #start the feedback process
         st.session_state.feedback_QA_counter =0
         generate_feedback()
@@ -610,11 +611,14 @@ def generate_feedback_button_click():
         
 def generate_feedback():
     feedback_prompt_with_inputs = feedback_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer)
+    st.write("now calling LLM")
     #call LLM to generate feedback
     feedback = llm(feedback_prompt_with_inputs)
     feedback_QA_prompt_with_inputs = feedback_QA_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer,feedback=st.session_state.feedback)
     #Call LLM to generate QA on Feedback 
     st.session_state.feedback_QA_response = llm(feedback_QA_prompt_with_inputs)
+    st.write("showing feedback QA response")
+    st.write("st.session_state.feedback_QA_response")
     feedback_QA_check(feedback_QA_response=st.session_state.feedback_QA_response)
 
 
@@ -632,9 +636,14 @@ def feedback_QA_check(feedback_QA_response):
     else:
         st.session_state.feedback_QA_result="Pass"
     db_insert_feedback(feedback_QA_response,st.session_state.feedback_QA_result)
+    st.write(" feedback DB insert complete ")
+    st.write(" feedback status " + st.session_state.feedback_QA_result)
+
     if (st.session_state.feedback_QA_result=="Fail" and st.session_state.feedback_QA_counter<st.session_state.max_feedback_QA_counter):
+        st.write(" regenerating feedback ")
         generate_feedback()
     st.session_state.session_status='Show Feedback'    
+    st.write(" feedback ready to show ")
     load_feedback_display()
     
 def load_feedback_display():    
