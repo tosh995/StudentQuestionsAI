@@ -299,7 +299,7 @@ def default_question_input_page():
 
 #function to get topic from the input screen
 def get_topic():
-    input_topic = st.text_input(label="Topic of Interest", placeholder="Example: vacation, basketball, dog etc....", key="topic_input")
+    input_topic = st.text_input(label="Topic of Interest", placeholder="Example: vacation, basketball, dog etc....", key="topic")
     if len(input_topic.split(" ")) > 6:
         st.write("Please enter a shorter topic. The maximum length is 6 words.")
         st.stop()
@@ -307,7 +307,7 @@ def get_topic():
 
 #function to get the CCSS Standard from the input screen
 def get_CCSS_standard():
-    input_CCSS_standard = st.text_input(label="Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W) would you like to test?", placeholder="Example: CCSS.ELA-LITERACY.W.4.1 etc....", key="CCSS_standard_input")     
+    input_CCSS_standard = st.text_input(label="Which [learning standard](http://www.thecorestandards.org/ELA-Literacy/W) would you like to test?", placeholder="Example: CCSS.ELA-LITERACY.W.4.1 etc....", key="CCSS_standard")     
     return input_CCSS_standard
 
 
