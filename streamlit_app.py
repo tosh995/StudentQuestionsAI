@@ -575,7 +575,7 @@ def load_question_display():
         st.write(st.session_state.question)
         #st.session_state.answer=get_answer()
         #load_question_display()
-        st.session_state.answer = st.text_area(label=" ", on_change=load_question_display1, placeholder="Type your response here...2000 words max", key="answer_input", height=500)
+        st.session_state.answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", height=500)
         #if len(input_answer.split(" ")) > 2000:
             #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
@@ -588,7 +588,7 @@ def load_question_display1():
         st.write(st.session_state.question)
         #st.session_state.answer=get_answer()
         #load_question_display()
-        st.session_state.answer = st.text_area(label=" ", on_change=load_question_display, placeholder="Type your response here...2000 words max", key="answer_input", height=500)
+        st.session_state.answer = st.text_area(label=" ", on_change=load_question_display, placeholder="Type your response here...2000 words max", height=500)
         #if len(input_answer.split(" ")) > 2000:
             #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
