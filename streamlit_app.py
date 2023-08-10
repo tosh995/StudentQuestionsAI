@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 api_key = st.secrets["api_key"]
-st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
+st.set_page_config(page_title="AI Questions Generator1", page_icon=":robot:")
 
 
 question_template = """
