@@ -621,7 +621,7 @@ def generate_feedback():
     #Call LLM to generate QA on Feedback 
     st.session_state.feedback_QA_response = llm(feedback_QA_prompt_with_inputs)
     st.write("showing feedback QA response")
-    st.write("st.session_state.feedback_QA_response")
+    st.write("st.session_state.feedback_QA_response is " + st.session_state.feedback_QA_response)
     feedback_QA_check(feedback_QA_response=st.session_state.feedback_QA_response)
 
 
