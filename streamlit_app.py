@@ -628,7 +628,9 @@ def generate_feedback():
 def feedback_QA_check(feedback_QA_response):
     st.session_state.feedback_QA_counter +=1
     # Parse the JSON string into a dictionary
-    data = json.loads(feedback_QA_response) 
+    cleaned_string = re.sub(r'[\x00-\x1F]+', '', feedback_QA_response)
+    data = json.loads(cleaned_string)
+    #data = json.loads(feedback_QA_response) 
     if ( data['relevance_to_students_response'] < 4 or 
         data['alignment_with_CCSS_standard'] < 4 or
         data['clarity_and_understadability'] < 4 or 
@@ -667,7 +669,7 @@ def load_feedback_display():
         
 if st.session_state.session_status == 'Topic Input': 
     load_welcome_page()
-elif st.session_state.session_status=='Answer Ready':
-    load_question_display()
+#elif st.session_state.session_status=='Answer Ready':
+    #load_question_display()
 elif st.session_state.session_status=='Show Feedback':    
     load_feedback_display()
