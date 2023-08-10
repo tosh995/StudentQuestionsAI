@@ -269,7 +269,7 @@ feedback_prompt = PromptTemplate(
 
 feedback_QA_prompt = PromptTemplate(
     input_variables=["topic","CCSS_standard","question","answer","feedback"],
-    template=feeback_QA_template
+    template=feedback_QA_template
 )
 
 #function to quickly reset the input screen
