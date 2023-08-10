@@ -199,7 +199,7 @@ CCSS Standard: {CCSS_standard}
 Provide your response in the following JSON format. Do not output any other information. Sample JSON response format:
 
         
-        "feedback_text": " Excellent job on expressing your enthusiasm for "Belly Up" by Stuart Gibbs. I can see that you've shared your opinion and gave us a summary of the story. Let's find ways to make your writing even better!
+        "feedback": " Excellent job on expressing your enthusiasm for "Belly Up" by Stuart Gibbs. I can see that you've shared your opinion and gave us a summary of the story. Let's find ways to make your writing even better!
         1. **Introduction:** You've done a nice job introducing your favorite book and why you like it. Try to introduce your topic in a more engaging way by combining the first few sentences. For instance, "My favorite book ever is 'Belly Up' by Stuart Gibbs, a suspenseful tale that starts with a mystery: the death of a hippo named Henry."
         2. **Supporting Reasons:** You've shared that the interesting topic, suspense, and humor are why you enjoy the book. Well done! Let's give specific examples to support these points and help the reader understand what makes these elements so good.
         3. **Linking Words:** You started off strong with the linking word 'Because'. Incorporate more of these into your writing to seamlessly connect your opinion and reasons.
@@ -669,7 +669,7 @@ def load_welcome_page_initiator():
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
     st.session_state.session_status='Topic Input'
-    st.header("AI Questions Generator")
+    st.header("AI Questions Generator1")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
@@ -689,5 +689,5 @@ if st.session_state.session_status == 'Topic Input':
     load_welcome_page()
 #elif st.session_state.answer:
     #load_question_display()
-elif st.session_state.session_status=='Show Feedback':    
-    load_feedback_display()
+#elif st.session_state.session_status=='Show Feedback':    
+    #load_feedback_display()
