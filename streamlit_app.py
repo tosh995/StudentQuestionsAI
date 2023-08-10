@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 api_key = st.secrets["api_key"]
-st.set_page_config(page_title="AI Questions Generator1", page_icon=":robot:")
+st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
 
 
 question_template = """
@@ -557,7 +557,7 @@ def generate_question_button_click():
         st.session_state.question_QA_response=""
         generate_question()
         st.session_state.session_status='Answer Input'
-        st.header("AI Questions Generator1")
+        st.header("AI Questions Generator")
         st.markdown("### Your Question:")
         #st.write(question_QA_response)
         #st.write (counter)
@@ -573,7 +573,7 @@ def generate_question_button_click():
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
     st.session_state.session_status='Topic Input'
-    st.header("AI Questions Generator1")
+    st.header("AI Questions Generator")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
