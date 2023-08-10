@@ -653,7 +653,7 @@ def feedback_QA_check(feedback_QA_response):
     load_feedback_display()
     
 def load_feedback_display():    
-    st.header("AI Questions Generator")
+    st.header("AI Questions Generator1")
     st.markdown("### Your Question:")
     #st.write(question_QA_response)
     st.write (st.session_state.feedback_QA_counter)
