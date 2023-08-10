@@ -254,7 +254,7 @@ if 'answer_last_id' not in st.session_state:
     st.session_state.answer_last_id = ""    
 
 if "session_status" not in st.session_state:
-    st.session_state.session_status='Topic Input"
+    st.session_state.session_status='Topic Input'
 
 
 llm = load_LLM(openai_api_key=api_key)
