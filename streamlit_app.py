@@ -596,6 +596,7 @@ def load_welcome_page():
 def generate_feedback_button_click():
     st.session_state.session_status='Show Feedback'
     st.write(st.session_state.session_status)
+    st.write(st.session_state.answer)
     if st.session_state.answer:
         st.write(st.session_state.answer)
         #load the answer into the answer table
