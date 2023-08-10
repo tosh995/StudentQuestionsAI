@@ -540,7 +540,7 @@ def question_QA_check(question_QA_response):
     db_insert_question(question_QA_response,question_QA_result) #load the question with its QA information to Question table
    
    #continue generating question if the QA fails until we reach the max limit 
-    if (data['question_QA_result']=="Fail" and question_QA_counter<max_question_QA_counter):
+    if (question_QA_result=="Fail" and question_QA_counter<max_question_QA_counter):
         generate_question()
 
 #process to generate question starts on clining the generate question button 
@@ -646,7 +646,7 @@ def feedback_QA_check(feedback_QA_response):
     else:
         feedback_QA_result="Pass"
     db_insert_feedback(feedback_QA_response,feedback_QA_result)
-    if (data['feedback_QA_result']=="Fail" and feedback_QA_counter<max_feedback_QA_counter):
+    if (feedback_QA_result=="Fail" and feedback_QA_counter<max_feedback_QA_counter):
         generate_feedback()
 
     
