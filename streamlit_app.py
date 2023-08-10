@@ -69,10 +69,10 @@ question_QA_template = """
 
     Provide your response in the following JSON format. Do not output any other information. Sample JSON response format:
         
-        "question_topic": "France",
+        "topic": "France",
         "CCSS_standard" : "CCSS.ELA-LITERACY.W.4.1"
-        "question_text": "What is the capital of France?",
-        "rubric_text": " How you will be evaluated:
+        "question": "What is the capital of France?",
+        "rubric": " How you will be evaluated:
         Use of at least three different types of figurative language (similes, metaphors, personification)
         Accurate explanation of each type of figurative language used
         Clear and effective description of the player's skills and abilities
