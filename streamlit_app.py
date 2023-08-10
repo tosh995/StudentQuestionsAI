@@ -569,8 +569,8 @@ def generate_question_button_click():
         #if len(input_answer.split(" ")) > 2000:
             #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
-        return
-        #st.stop()
+        #return
+        st.stop()
 
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
