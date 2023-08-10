@@ -312,7 +312,7 @@ def get_CCSS_standard():
 
 #function to get the student's answer from the input screen
 def get_answer():
-    input_answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500,key="answer_input")
+    input_answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
     if len(input_answer.split(" ")) > 2000:
         st.write("Please enter a shorter answer. The maximum length is 2000 words.")
         return
