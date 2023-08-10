@@ -611,7 +611,7 @@ def generate_feedback_button_click():
 def generate_feedback():
     feedback_prompt_with_inputs = feedback_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer)
     #call LLM to generate feedback
-    feedback = llm(prompt_with_inputs)
+    feedback = llm(feedback_prompt_with_inputs)
     feedback_QA_prompt_with_inputs = question_QA_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer,feedback=st.session_state.feedback)
     #Call LLM to generate QA on Feedback 
     st.session_state.feedback_QA_response = llm(feedback_QA_prompt_with_inputs)
