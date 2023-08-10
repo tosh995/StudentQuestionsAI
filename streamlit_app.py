@@ -459,7 +459,7 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
     
     
     # Drop the table named 'feedback'
-    #cursor.execute('DROP TABLE IF EXISTS feedback')
+    cursor.execute('DROP TABLE IF EXISTS feedback')
 
     # Create a table to store the feedback and its QA information
     cursor.execute('''
@@ -669,7 +669,7 @@ def load_welcome_page_initiator():
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
     st.session_state.session_status='Topic Input'
-    st.header("AI Questions Generator1")
+    st.header("AI Questions Generator2")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
