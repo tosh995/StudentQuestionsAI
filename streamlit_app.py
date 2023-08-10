@@ -323,7 +323,9 @@ def get_answer():
 
 #function to insert the Question and its QA information into Question table
 def db_insert_question(question_QA_response,question_QA_result):
-    data = json.loads(question_QA_response)
+    cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
+    data = json.loads(cleaned_string)
+    #data = json.loads(question_QA_response)
 
     #global question
     # st.write("Attempt Number " + str(counter) + " " + question_QA_result)
@@ -654,7 +656,7 @@ def load_welcome_page():
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
     st.session_state.session_status='Topic Input'
-    st.header("AI Questions Generator2")
+    st.header("AI Questions Generator1")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
