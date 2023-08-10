@@ -651,5 +651,5 @@ def feedback_QA_check(feedback_QA_response):
         
 if st.session_state.session_status == 'Topic Input': 
     load_welcome_page()
-else if  st.session_state.session_status=='Answer Input':
+elif  st.session_state.session_status=='Answer Input':
     load_question_display()
