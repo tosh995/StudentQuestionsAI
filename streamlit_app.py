@@ -306,7 +306,7 @@ def get_answer():
 
 
 #function to insert the Question and its QA information into Question table
-def db_insert_question(question_QA_response):
+def db_insert_question(question_QA_response,question_QA_result):
     #global topic
     #global CCSS_standard
     global question_last_id
@@ -379,7 +379,7 @@ def db_insert_question(question_QA_response):
         data['creativity_and_engagement'],
         data['bias_and_sensitivity'],
         data['overall_quality'],
-        data['question_QA_result'],
+        question_QA_result,
         datetime.now()
     ))
     
@@ -434,7 +434,7 @@ def db_insert_answer():
 
 
 #function to load the feedback into the feedback table
-def db_insert_feedback(feedback_QA_response):
+def db_insert_feedback(feedback_QA_response,feedback_QA_result):
     global question_last_id
     global answer_last_id
     data = json.loads(feedback_QA_response)
@@ -492,7 +492,7 @@ def db_insert_feedback(feedback_QA_response):
         data['constructiveness_and_encouragement'], 
         data['accuracy_and_fairness'],
         data['overall_quality'],
-        data['feedback_QA_result'],
+        feedback_QA_result,
         datetime.now()
     ))
     # Commit the changes and close the connection
@@ -537,8 +537,7 @@ def question_QA_check(question_QA_response):
         question_QA_result="Fail"
     else:
         question_QA_result="Pass"
-    data['question_QA_result'] = question_QA_result
-    db_insert_question(question_QA_response) #load the question with its QA information to Question table
+    db_insert_question(question_QA_response,question_QA_result) #load the question with its QA information to Question table
    
    #continue generating question if the QA fails until we reach the max limit 
     if (data['question_QA_result']=="Fail" and question_QA_counter<max_question_QA_counter):
@@ -646,8 +645,7 @@ def feedback_QA_check(feedback_QA_response):
         feedback_QA_result="Fail"
     else:
         feedback_QA_result="Pass"
-    data['feedback_QA_result'] = feedback_QA_result
-    db_insert_feedback(feedback_QA_response)
+    db_insert_feedback(feedback_QA_response,feedback_QA_result)
     if (data['feedback_QA_result']=="Fail" and feedback_QA_counter<max_feedback_QA_counter):
         generate_feedback()
 
