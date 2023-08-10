@@ -314,6 +314,7 @@ def get_CCSS_standard():
 #function to get the student's answer from the input screen
 def get_answer():
     input_answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
+    st.session_state.session_status='Answer Ready'
     if len(input_answer.split(" ")) > 2000:
         st.write("Please enter a shorter answer. The maximum length is 2000 words.")
         return
@@ -568,8 +569,8 @@ def load_question_display():
         #st.write(question_QA_response)
         #st.write (counter)
         st.write(st.session_state.question)
-        #input_answer=get_answer()
-        st.session_state.answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
+        st.session_state.answer=get_answer()
+        #st.session_state.answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
         #if len(input_answer.split(" ")) > 2000:
             #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
@@ -664,7 +665,7 @@ def load_feedback_display():
         
 if st.session_state.session_status == 'Topic Input': 
     load_welcome_page()
-elif st.session_state.session_status=='Answer Input':
+elif st.session_state.session_status=='Answer Ready':
     load_question_display()
 elif st.session_state.session_status=='Show Feedback':    
     load_feedback_display()
