@@ -207,7 +207,7 @@ Provide your response in the following JSON format. Do not output any other info
         5. **Other Feedback:** Remember to check your spelling and grammar. For example, 'Their' should be 'there', and 'breathe' should be 'breath'. Also, always capitalize names such as 'FunJungle'.",
         "relevance_to_students_response": 4,
         "alignment_with_CCSS_standard": 5,
-        "clarity_and_understadability": 3,
+        "clarity_and_understandability": 3,
         "constructiveness_and_encouragement": 4,
         "accuracy_and_fairness": 5,
         "overall_quality": 3
@@ -470,7 +470,7 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
         feedback TEXT,
         relevance_to_students_response INTEGER,
         alignment_with_CCSS_standard INTEGER,
-        clarity_and_understadability INTEGER,
+        clarity_and_understandability INTEGER,
         constructiveness_and_encouragement INTEGER,
         accuracy_and_fairness INTEGER,
         overall_quality INTEGER,
@@ -488,7 +488,7 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
         feedback,
         relevance_to_students_response,
         alignment_with_CCSS_standard,
-        clarity_and_understadability,
+        clarity_and_understandability,
         constructiveness_and_encouragement,
         accuracy_and_fairness,
         overall_quality,
@@ -669,7 +669,7 @@ def load_welcome_page_initiator():
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
     st.session_state.session_status='Topic Input'
-    st.header("AI Questions Generator")
+    st.header("AI Questions Generator1")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
