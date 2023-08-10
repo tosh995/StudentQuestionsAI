@@ -264,7 +264,7 @@ question_QA_prompt = PromptTemplate(
 
 feedback_prompt = PromptTemplate(
     input_variables=["topic","CCSS_standard","question","answer"],
-    template=answer_feedback_template
+    template=feedback_template
 )
 
 feedback_QA_prompt = PromptTemplate(
