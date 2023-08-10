@@ -557,7 +557,7 @@ def generate_question_button_click():
         st.session_state.question_QA_response=""
         generate_question()
         st.session_state.session_status='Answer Input'
-        st.header("AI Questions Generator")
+        st.header("AI Questions Generator1")
         st.markdown("### Your Question:")
         #st.write(question_QA_response)
         #st.write (counter)
