@@ -294,7 +294,8 @@ def reset_question_input_page():
 #function to apply default values to input screen, facilitates testing and development
 def default_question_input_page():
     st.session_state.topic = "Baseball"
-    st.session_state.CCSS_standard = "CCSS.ELA-LITERACY.W.4.9"    
+    st.session_state.CCSS_standard = "CCSS.ELA-LITERACY.W.4.9"   
+    st.write("Default Updated")
 
 #function to get topic from the input screen
 def get_topic():
