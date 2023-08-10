@@ -652,9 +652,9 @@ def load_feedback_display():
 
 
         
-if st.session_state.session_status == 'Topic Input': 
+if st.session_state.session_status == '': 
     load_welcome_page()
-elif st.session_state.session_status=='Answer Input':
+#elif st.session_state.session_status=='Answer Input':
     load_question_display()
-elif st.session_state.session_status=='Show Feedback':    
+#elif st.session_state.session_status=='Show Feedback':    
     load_feedback_display()
