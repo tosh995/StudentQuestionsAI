@@ -301,7 +301,7 @@ def get_answer():
     input_answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
     if len(input_answer.split(" ")) > 2000:
         st.write("Please enter a shorter answer. The maximum length is 2000 words.")
-        st.stop()
+        return
     return input_answer 
 
 
