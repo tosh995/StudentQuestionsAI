@@ -5,7 +5,7 @@ from langchain import PromptTemplate
 from langchain.llms import OpenAI
 import pandas as pd
 from datetime import datetime
-
+import re
 
 api_key = st.secrets["api_key"]
 st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
@@ -525,7 +525,9 @@ def generate_question():
 def question_QA_check(question_QA_response):
     st.session_state.question_QA_counter += 1
     # Parse the JSON string into a dictionary
-    data = json.loads(question_QA_response)
+    cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
+    data = json.loads(cleaned_string)
+    #data = json.loads(question_QA_response)
     if ( data['relevance_to_CCSS_standard'] < 4 or 
         data['relevance_to_topic_of_interest'] < 4 or
         data['question_clarity_and_complexity'] < 4 or 
