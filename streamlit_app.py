@@ -562,7 +562,7 @@ def generate_question_button_click():
         st.markdown("### Your Question:")
         #st.write(question_QA_response)
         #st.write (counter)
-        st.write(question)
+        st.write(st.session_state.question)
         #input_answer=get_answer()
         answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
         #if len(input_answer.split(" ")) > 2000:
