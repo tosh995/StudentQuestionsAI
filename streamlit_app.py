@@ -315,7 +315,6 @@ def get_CCSS_standard():
 def get_answer():
     input_answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
     st.session_state.session_status='Answer Ready'
-    load_question_display()
     if len(input_answer.split(" ")) > 2000:
         st.write("Please enter a shorter answer. The maximum length is 2000 words.")
         return
@@ -573,6 +572,7 @@ def load_question_display():
         #st.write (counter)
         st.write(st.session_state.question)
         st.session_state.answer=get_answer()
+        load_question_display()
         #st.session_state.answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
         #if len(input_answer.split(" ")) > 2000:
             #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
