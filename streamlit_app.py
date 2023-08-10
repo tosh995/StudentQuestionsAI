@@ -200,16 +200,11 @@ Provide your response in the following JSON format. Do not output any other info
 
         
         "feedback_text": " Excellent job on expressing your enthusiasm for "Belly Up" by Stuart Gibbs. I can see that you've shared your opinion and gave us a summary of the story. Let's find ways to make your writing even better!
-
-1. **Introduction:** You've done a nice job introducing your favorite book and why you like it. Try to introduce your topic in a more engaging way by combining the first few sentences. For instance, "My favorite book ever is 'Belly Up' by Stuart Gibbs, a suspenseful tale that starts with a mystery: the death of a hippo named Henry."
-
-2. **Supporting Reasons:** You've shared that the interesting topic, suspense, and humor are why you enjoy the book. Well done! Let's give specific examples to support these points and help the reader understand what makes these elements so good.
-
-3. **Linking Words:** You started off strong with the linking word 'Because'. Incorporate more of these into your writing to seamlessly connect your opinion and reasons.
-
-4. **Conclusion:** Your concluding statement encourages others to read the book, which is excellent! In your conclusion, try to summarize why you think the book is worth reading.
-
-5. **Other Feedback:** Remember to check your spelling and grammar. For example, 'Their' should be 'there', and 'breathe' should be 'breath'. Also, always capitalize names such as 'FunJungle'."
+        1. **Introduction:** You've done a nice job introducing your favorite book and why you like it. Try to introduce your topic in a more engaging way by combining the first few sentences. For instance, "My favorite book ever is 'Belly Up' by Stuart Gibbs, a suspenseful tale that starts with a mystery: the death of a hippo named Henry."
+        2. **Supporting Reasons:** You've shared that the interesting topic, suspense, and humor are why you enjoy the book. Well done! Let's give specific examples to support these points and help the reader understand what makes these elements so good.
+        3. **Linking Words:** You started off strong with the linking word 'Because'. Incorporate more of these into your writing to seamlessly connect your opinion and reasons.
+        4. **Conclusion:** Your concluding statement encourages others to read the book, which is excellent! In your conclusion, try to summarize why you think the book is worth reading.
+        5. **Other Feedback:** Remember to check your spelling and grammar. For example, 'Their' should be 'there', and 'breathe' should be 'breath'. Also, always capitalize names such as 'FunJungle'.",
         "relevance_to_students_response": 4,
         "alignment_with_CCSS_standard": 5,
         "clarity_and_understadability": 3,
@@ -223,25 +218,44 @@ def load_LLM(openai_api_key):
     llm = OpenAI(model_name="gpt-3.5-turbo",temperature=0.6, openai_api_key=openai_api_key)
     return llm
 
-#Global variables
 #counters for how many QA attempts has been made
-question_QA_counter=0  
-feedback_QA_counter=0
+
+if 'question_QA_counter' not in st.session_state:
+    st.session_state.question_QA_counter = 0
+if 'feedback_QA_counter' not in st.session_state:
+    st.session_state.feedback_QA_counter = 0
+
 #counters for how many max QA attempts to make before showing the last results
-max_question_QA_counter=3
-max_feedback_QA_counter=3
-topic=""
-CCSS_standard=""
-question=""
-question_QA_result=""       #PASS OR FAIL
-question_QA_response=""
-answer=""
-feedback=""
-feedback_QA_result=""       
-feedback_QA_response=""
+if 'max_question_QA_counter' not in st.session_state:
+    st.session_state.max_question_QA_counter=3
+if 'max_feedback_QA_counter' not in st.session_state:    
+    st.session_state.max_feedback_QA_counter=3
+
+if 'topic' not in st.session_state:
+    st.session_state.topic = ""
+if 'CCSS_standard' not in st.session_state:
+    st.session_state.CCSS_standard = ""
+if 'question' not in st.session_state:
+    st.session_state.question = ""
+if 'question_QA_result' not in st.session_state:
+    st.session_state.question_QA_result = ""
+if 'answer' not in st.session_state:
+    st.session_state.answer = ""
+if 'feedback' not in st.session_state:
+    st.session_state.feedback = ""
+if 'feedback_QA_result' not in st.session_state:
+    st.session_state.feedback_QA_result = ""
+if 'feedback_QA_response' not in st.session_state:
+    st.session_state.feedback_QA_response = ""
 #variables to store the ID values for foreign key references in various tables
-question_last_id=-1
-answer_last_id=-1
+if 'question_last_id' not in st.session_state:
+    st.session_state.question_last_id = ""
+if 'answer_last_id' not in st.session_state:
+    st.session_state.answer_last_id = ""    
+
+if "session_status" not in st.session_state:
+    st.session_state.session_status='Topic Input"
+
 
 llm = load_LLM(openai_api_key=api_key)
 
@@ -272,12 +286,12 @@ feedback_QA_prompt = PromptTemplate(
     template=feedback_QA_template
 )
 
-#function to quickly reset the input screen
+#function to reset the input screen
 def reset_question_input_page():
     st.session_state.topic = ""
     st.session_state.CCSS_standard = ""
     
-#function to quickly apply default value to input screen, facilitates testing and development
+#function to apply default values to input screen, facilitates testing and development
 def default_question_input_page():
     st.session_state.topic = "Baseball"
     st.session_state.CCSS_standard = "CCSS.ELA-LITERACY.W.4.9"    
@@ -307,9 +321,6 @@ def get_answer():
 
 #function to insert the Question and its QA information into Question table
 def db_insert_question(question_QA_response,question_QA_result):
-    #global topic
-    #global CCSS_standard
-    global question_last_id
     data = json.loads(question_QA_response)
 
     #global question
@@ -383,7 +394,7 @@ def db_insert_question(question_QA_response,question_QA_result):
         datetime.now()
     ))
     
-    question_last_id = cursor.lastrowid  #capture lastrowid to store as foreign key reference in other tables
+    st.session_state.question_last_id = cursor.lastrowid  #capture lastrowid to store as foreign key reference in other tables
 
     # Commit the changes and close the connection
     conn.commit()
@@ -393,8 +404,6 @@ def db_insert_question(question_QA_response,question_QA_result):
 
 #function to insert the answer into answer table
 def db_insert_answer():
-    global question_last_id
-    global answer_last_id
     # Connect to SQLite database (or create it if it doesn't exist)
     conn = sqlite3.connect('studentquestionsai.db')
 
@@ -420,12 +429,12 @@ def db_insert_answer():
         load_date_time
     ) VALUES (?, ?, ?)
     ''', (
-    question_last_id,
-    answer,
+    st.session_state.question_last_id,
+    st.session_state.answer,
     datetime.now()
     ))
     
-    answer_last_id = cursor.lastrowid  #capture lastrowid to store as foreign key reference in other tables
+    st.session_state.answer_last_id = cursor.lastrowid  #capture lastrowid to store as foreign key reference in other tables
 
     # Commit the changes and close the connection
     conn.commit()
@@ -435,8 +444,6 @@ def db_insert_answer():
 
 #function to load the feedback into the feedback table
 def db_insert_feedback(feedback_QA_response,feedback_QA_result):
-    global question_last_id
-    global answer_last_id
     data = json.loads(feedback_QA_response)
 
     conn = sqlite3.connect('studentquestionsai.db')
@@ -483,8 +490,8 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
         load_date_time
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
-        question_last_id,
-        answer_last_id,
+        st.session_state.question_last_id,
+        st.session_state.answer_last_id,
         data['feedback'],
         data['relevance_to_students_response'],
         data['alignment_with_CCSS_standard'],
@@ -504,27 +511,17 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
 
 #function to generate question 
 def generate_question():
-    global question_QA_counter
-    global question
-    global question_QA_response
-    global option_count
-    global CCSS_standard
-    global topic
-    prompt_with_inputs = question_prompt.format(topic=topic,CCSS_standard=CCSS_standard)
+    prompt_with_inputs = question_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard)
     #call LLM to generate question
-    question = llm(prompt_with_inputs)
+    st.session_state.question = llm(prompt_with_inputs)
     #starting Question QA process
-    question_QA_prompt_with_inputs = question_QA_prompt.format(topic=topic,CCSS_standard=CCSS_standard,question=question)
+    question_QA_prompt_with_inputs = question_QA_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question)
     #call LLM to generate QA for question
-    question_QA_response = llm(question_QA_prompt_with_inputs)
-    question_QA_check(question_QA_response=question_QA_response)
+    st.session_state.question_QA_response = llm(question_QA_prompt_with_inputs)
+    question_QA_check(question_QA_response=st.session_state.question_QA_response)
 
 def question_QA_check(question_QA_response):
-    global question_QA_result
-    global question_QA_counter
-    global max_question_QA_counter
-    global question_last_id
-    question_QA_counter += 1
+    st.session_state.question_QA_counter += 1
     # Parse the JSON string into a dictionary
     data = json.loads(question_QA_response)
     if ( data['relevance_to_CCSS_standard'] < 4 or 
@@ -534,37 +531,30 @@ def question_QA_check(question_QA_response):
         data['creativity_and_engagement'] < 4 or 
         data['bias_and_sensitivity'] < 4 or 
         data['overall_quality'] < 4 ):
-        question_QA_result="Fail"
+        st.session_state.question_QA_result="Fail"
     else:
-        question_QA_result="Pass"
-    db_insert_question(question_QA_response,question_QA_result) #load the question with its QA information to Question table
+        st.session_state.question_QA_result="Pass"
+    db_insert_question(question_QA_response,st.session_state.question_QA_result) #load the question with its QA information to Question table
    
    #continue generating question if the QA fails until we reach the max limit 
-    if (question_QA_result=="Fail" and question_QA_counter<max_question_QA_counter):
+    if (st.session_state.question_QA_result=="Fail" and st.session_state.question_QA_counter<st.session_state.max_question_QA_counter):
         generate_question()
 
 #process to generate question starts on clining the generate question button 
 def generate_question_button_click():
-    global topic
-    global CCSS_standard
-    global question_QA_counter
-    global question
-    global question_QA_result   
-    global question_QA_response
-    global answer
     if topic:
-        if not CCSS_standard:
+        if not st.session_state.CCSS_standard:
             st.warning('Please enter a writing CCSS standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
             return
-        CCSS_standard_prompt_with_inputs = CCSS_standard_prompt.format(CCSS_standard=CCSS_standard)
-        CCSS_standard_response = llm(CCSS_standard_prompt_with_inputs)
-        if CCSS_standard_response == "No" or CCSS_standard_response == "NO" or CCSS_standard_response == "No." or CCSS_standard_response == "NO." :
+        CCSS_standard_prompt_with_inputs = CCSS_standard_prompt.format(CCSS_standard=st.session_state.CCSS_standard)
+        st.session_state.CCSS_standard_response = llm(CCSS_standard_prompt_with_inputs)
+        if st.session_state.CCSS_standard_response == "No" or st.session_state.CCSS_standard_response == "NO" or st.session_state.CCSS_standard_response == "No." or st.session_state.CCSS_standard_response == "NO." :
             st.warning("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",icon="⚠️")
             return
-        question_QA_counter=0
-        question=""
-        question_QA_result=""       
-        question_QA_response=""
+        st.session_state.question_QA_counter=0
+        st.session_state.question=""
+        st.session_state.question_QA_result=""       
+        st.session_state.question_QA_response=""
         generate_question()
         st.header("AI Questions Generator")
         st.markdown("### Your Question:")
@@ -581,17 +571,12 @@ def generate_question_button_click():
 
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
-    global topic 
-    global counter
-    global question
-    global question_QA_response
-    #global option_count
-    global CCSS_standard
+    st.session_state.session_status='Topic Input'
     st.header("AI Questions Generator")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
-    CCSS_standard = get_CCSS_standard()
-    topic = get_topic()
+    st.session_state.CCSS_standard = get_CCSS_standard()
+    st.session_state.topic = get_topic()
     col3, col4, col5 = st.columns(3)    
     with col3:
         st.button("Generate Question",type='secondary', help="Click to generate a question", on_click=generate_question_button_click)
@@ -603,43 +588,29 @@ def load_welcome_page():
 
 #function to respond to submission of the feedback_QA_counter Answer by the student on clicking the submit button 
 def generate_feedback_button_click():
-    global feedback_QA_counter
-    global answer
-    if answer:
+    st.session_state.session_status='Show Feedback'
+    if st.session_state.answer:
         #load the answer into the answer table
         db_insert_answer()  
         #start the feedback process
-        feedback_QA_counter =0
+        st.session_state.feedback_QA_counter =0
         generate_feedback()
         
         
         
         
 def generate_feedback():
-    global feedback_counter
-    global question
-    global answer
-    global feedback
-    global feedback_QA_response
-    #global option_count
-    global CCSS_standard
-    global topic    
-    feedback_prompt_with_inputs = feedback_prompt.format(topic=topic,CCSS_standard=CCSS_standard,question=question,answer=answer)
+    feedback_prompt_with_inputs = feedback_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer)
     #call LLM to generate feedback
     feedback = llm(prompt_with_inputs)
-    feedback_QA_prompt_with_inputs = question_QA_prompt.format(topic=topic,CCSS_standard=CCSS_standard,question=question,answer=answer,feedback=feedback)
+    feedback_QA_prompt_with_inputs = question_QA_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer,feedback=st.session_state.feedback)
     #Call LLM to generate QA on Feedback 
-    feedback_QA_response = llm(feedback_QA_prompt_with_inputs)
-    feedback_QA_check(feedback_QA_response=feedback_QA_response)
+    st.session_state.feedback_QA_response = llm(feedback_QA_prompt_with_inputs)
+    feedback_QA_check(feedback_QA_response=st.session_state.feedback_QA_response)
 
 
 def feedback_QA_check(feedback_QA_response):
-    global feedback_QA_result
-    global max_feedback_QA_counter
-    global feedback_QA_counter
-    global question_last_id
-    global answer_last_id
-    feedback_QA_counter +=1
+    st.session_state.feedback_QA_counter +=1
     # Parse the JSON string into a dictionary
     data = json.loads(feedback_QA_response) 
     if ( data['relevance_to_students_response'] < 4 or 
@@ -648,18 +619,19 @@ def feedback_QA_check(feedback_QA_response):
         data['constructiveness_and_encouragement'] < 4 or 
         data['accuracy_and_fairness'] < 4 or 
         data['overall_quality'] < 4 ): 
-        feedback_QA_result="Fail"
+        st.session_state.feedback_QA_result="Fail"
     else:
-        feedback_QA_result="Pass"
-    db_insert_feedback(feedback_QA_response,feedback_QA_result)
-    if (feedback_QA_result=="Fail" and feedback_QA_counter<max_feedback_QA_counter):
+        st.session_state.feedback_QA_result="Pass"
+    db_insert_feedback(feedback_QA_response,st.session_state.feedback_QA_result)
+    if (st.session_state.feedback_QA_result=="Fail" and st.session_state.feedback_QA_counter<st.session_state.max_feedback_QA_counter):
         generate_feedback()
+    st.session_state.session_status='Show Question'    
     st.header("AI Questions Generator")
     st.markdown("### Your Question:")
     #st.write(question_QA_response)
-    st.write (feedback_QA_counter)
-    st.write(question)
-    st.write(feedback)
+    st.write (st.session_state.feedback_QA_counter)
+    st.write(st.session_state.question)
+    st.write(st.session_state.feedback)
     st.button("Get Another Question", help="Click to get another question", on_click=load_welcome_page)
     #return
     #st.stop()
@@ -669,5 +641,5 @@ def feedback_QA_check(feedback_QA_response):
 
 
         
-if question_QA_counter == 0: 
+if st.session_state.session_status == 'Topic Input': 
     load_welcome_page()
