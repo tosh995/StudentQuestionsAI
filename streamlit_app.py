@@ -633,7 +633,10 @@ def feedback_QA_check(feedback_QA_response):
     db_insert_feedback(feedback_QA_response,st.session_state.feedback_QA_result)
     if (st.session_state.feedback_QA_result=="Fail" and st.session_state.feedback_QA_counter<st.session_state.max_feedback_QA_counter):
         generate_feedback()
-    st.session_state.session_status='Show Question'    
+    st.session_state.session_status='Show Feedback'    
+    load_feedback_display()
+    
+def load_feedback_display():    
     st.header("AI Questions Generator")
     st.markdown("### Your Question:")
     #st.write(question_QA_response)
@@ -651,5 +654,7 @@ def feedback_QA_check(feedback_QA_response):
         
 if st.session_state.session_status == 'Topic Input': 
     load_welcome_page()
-elif  st.session_state.session_status=='Answer Input':
+elif st.session_state.session_status=='Answer Input':
     load_question_display()
+elif st.session_state.session_status= ='Show Feedback':    
+    load_feedback_display()
