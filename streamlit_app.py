@@ -112,9 +112,7 @@ CCSS Standard: {CCSS_standard}
 Review the following writing by the student  and provide feedback to the student that is easily understandable by the student, and that gives them steps to improve on areas they need to work on. Also, rewrite the student's writing as part of the feedback to show what a great writing would look like. If the student did a great job, no need to rewrite and just give the feedback to the student. If you feel that the student needs to resubmit the writing, suggest the student do so. After that, evaluate your feedback for clarity, constructiveness, Actionability and Supportiveness on a scale of 0-10 for quality assurance purposes. If you score your feedback less than 9, then re-write your feedback. Here below is a sample feedback for reference. Only provide the final feedback in your response/completion as it will be sent to the student directly. Don't include any other information in your response. 
 
 ***********Sample feedback starts here *************
-“Hello,
-
-Excellent job on expressing your enthusiasm for "Belly Up" by Stuart Gibbs. I can see that you've shared your opinion and gave us a summary of the story. Let's find ways to make your writing even better!
+“Excellent job on expressing your enthusiasm for "Belly Up" by Stuart Gibbs. I can see that you've shared your opinion and gave us a summary of the story. Let's find ways to make your writing even better!
 
 1. **Introduction:** You've done a nice job introducing your favorite book and why you like it. Try to introduce your topic in a more engaging way by combining the first few sentences. For instance, "My favorite book ever is 'Belly Up' by Stuart Gibbs, a suspenseful tale that starts with a mystery: the death of a hippo named Henry."
 
@@ -608,7 +606,8 @@ def load_question_display1():
 def generate_feedback_button_click():
     st.session_state.session_status='Show Feedback'
     #st.write(st.session_state.session_status)
-    st.write("Thanks for submitting your response. Your feedback is being generated....")
+    st.header("AI Questions Generator")
+    st.write("Thank you for submitting your response. Your feedback is being generated....")
     if st.session_state.answer:
         #st.write(st.session_state.answer)
         #load the answer into the answer table
@@ -661,7 +660,6 @@ def feedback_QA_check(feedback_QA_response):
 
 #function to display the feedback generated    
 def load_feedback_display():    
-    st.header("AI Questions Generator")
     st.markdown("### Here below is the feedback to your response")    
     st.write(st.session_state.feedback)
     st.markdown("### Here below are the Question and the response you submitted for your reference:")
