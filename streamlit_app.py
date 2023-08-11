@@ -661,11 +661,11 @@ def feedback_QA_check(feedback_QA_response):
     
 def load_feedback_display():    
     st.header("AI Questions Generator")
-    st.markdown("## Here below is the feedback to your response")    
+    st.markdown("# Here below is the feedback to your response")    
     st.write(st.session_state.feedback)
-    st.markdown("##Here below are the Question and the response you submitted for your reference:")
+    st.markdown("# Here below are the Question and the response you submitted for your reference:")
     st.write(st.session_state.question)
-    st.markdown("Your response:")  
+    st.markdown("# Your response:")  
     st.write(st.session_state.answer)    
     st.button("Get Another Question", help="Click to get another question", on_click=load_welcome_page_initiator)
 
