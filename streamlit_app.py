@@ -579,7 +579,7 @@ def generate_question_button_click():
         
 def load_question_display():        
         st.header("AI Questions Generator")
-        st.markdown("### Your Question:")
+        st.markdown("### Here is your question:")
         #st.write(question_QA_response)
         #st.write (counter)
         st.write(st.session_state.question)
