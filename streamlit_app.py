@@ -322,7 +322,15 @@ def get_answer():
 #function to insert the Question and its QA information into Question table
 def db_insert_question(question_QA_response,question_QA_result):
     cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
-    data = json.loads(cleaned_string)
+    #data = json.loads(cleaned_string)
+    try:
+        data = json.loads(cleaned_string)
+    except json.JSONDecodeError as e:
+    generate_question()
+    except ValueError as e:
+    generate_question()
+    except TypeError as e:
+    generate_question()
     #data = json.loads(question_QA_response)
 
     #global question
@@ -447,7 +455,15 @@ def db_insert_answer():
 #function to load the feedback into the feedback table
 def db_insert_feedback(feedback_QA_response,feedback_QA_result):
     cleaned_string = re.sub(r'[\x00-\x1F]+', '', feedback_QA_response)
-    data = json.loads(cleaned_string)
+    #data = json.loads(cleaned_string)
+    try:
+        data = json.loads(cleaned_string)
+    except json.JSONDecodeError as e:
+    generate_feedback()
+    except ValueError as e:
+    generate_feedback()
+    except TypeError as e:
+    generate_feedback()
     #data = json.loads(feedback_QA_response)
 
     conn = sqlite3.connect('studentquestionsai.db')
@@ -536,7 +552,16 @@ def question_QA_check(question_QA_response):
     st.session_state.question_QA_counter += 1
     # Parse the JSON string into a dictionary
     cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
-    data = json.loads(cleaned_string)
+    #data = json.loads(cleaned_string)
+    try:
+        data = json.loads(cleaned_string)
+    except json.JSONDecodeError as e:
+    generate_question()
+    except ValueError as e:
+    generate_question()
+    except TypeError as e:
+    generate_question()
+    
     #data = json.loads(question_QA_response)
     if ( data['relevance_to_CCSS_standard'] < 4 or 
         data['relevance_to_topic_of_interest'] < 4 or
@@ -636,7 +661,15 @@ def feedback_QA_check(feedback_QA_response):
     st.session_state.feedback_QA_counter +=1
     # Parse the JSON string into a dictionary
     cleaned_string = re.sub(r'[\x00-\x1F]+', '', feedback_QA_response)
-    data = json.loads(cleaned_string)
+    #data = json.loads(cleaned_string)
+    try:
+        data = json.loads(cleaned_string)
+    except json.JSONDecodeError as e:
+    generate_feedback()
+    except ValueError as e:
+    generate_feedback()
+    except TypeError as e:
+    generate_feedback()
     #data = json.loads(feedback_QA_response) 
     if ( data['relevance_to_students_response'] < 4 or 
         data['alignment_with_CCSS_standard'] < 4 or
