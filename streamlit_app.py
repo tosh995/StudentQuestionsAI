@@ -560,7 +560,7 @@ def question_QA_check(question_QA_response):
 def generate_question_button_click():
     if st.session_state.topic:
         if not st.session_state.CCSS_standard:
-            st.warning('Please enter a writing CCSS standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W/4/)', icon="⚠️")
+            st.warning('Please enter a writing CCSS standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W)', icon="⚠️")
             return
         CCSS_standard_prompt_with_inputs = CCSS_standard_prompt.format(CCSS_standard=st.session_state.CCSS_standard)
         st.session_state.CCSS_standard_response = llm(CCSS_standard_prompt_with_inputs)
@@ -619,7 +619,7 @@ def generate_feedback_button_click():
         generate_feedback()
         
         
-        
+ #Function to generate feedback       
 def generate_feedback():
     feedback_prompt_with_inputs = feedback_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer)
     #st.write("now calling LLM")
@@ -632,7 +632,7 @@ def generate_feedback():
     #st.write("st.session_state.feedback_QA_response is " + st.session_state.feedback_QA_response)
     feedback_QA_check(feedback_QA_response=st.session_state.feedback_QA_response)
 
-
+#function to QA the feedback generated
 def feedback_QA_check(feedback_QA_response):
     st.session_state.feedback_QA_counter +=1
     # Parse the JSON string into a dictionary
@@ -658,7 +658,8 @@ def feedback_QA_check(feedback_QA_response):
     st.session_state.session_status='Show Feedback'    
     #st.write(" feedback ready to show ")
     load_feedback_display()
-    
+
+#function to display the feedback generated    
 def load_feedback_display():    
     st.header("AI Questions Generator")
     st.markdown("### Here below is the feedback to your response")    
@@ -676,7 +677,16 @@ def load_welcome_page_initiator():
     
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
-    st.session_state.session_status='Topic Input'
+    st.session_state.question_QA_counter = 0
+    st.session_state.feedback_QA_counter = 0
+    st.session_state.question = ""
+    st.session_state.question_QA_result = ""
+    st.session_state.answer = ""
+    st.session_state.feedback = ""
+    st.session_state.feedback_QA_result = ""
+    st.session_state.feedback_QA_response = ""
+    st.session_state.question_last_id = ""
+    st.session_state.answer_last_id = ""    
     st.header("AI Questions Generator")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
@@ -691,11 +701,6 @@ def load_welcome_page():
         st.button("Default", type='secondary', help="Click to use default values", on_click=default_question_input_page)
 
    
-
         
 if st.session_state.session_status == 'Topic Input': 
     load_welcome_page()
-#elif st.session_state.answer:
-    #load_question_display()
-#elif st.session_state.session_status=='Show Feedback':    
-    #load_feedback_display()
