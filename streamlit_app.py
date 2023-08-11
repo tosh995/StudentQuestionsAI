@@ -327,10 +327,13 @@ def db_insert_question(question_QA_response,question_QA_result):
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
         generate_question()
+        return
     except ValueError as e:
         generate_question()
+        return
     except TypeError as e:
         generate_question()
+        return
     #data = json.loads(question_QA_response)
 
     #global question
@@ -460,10 +463,13 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
         generate_feedback()
+        return
     except ValueError as e:
         generate_feedback()
+        return
     except TypeError as e:
         generate_feedback()
+        return
     #data = json.loads(feedback_QA_response)
 
     conn = sqlite3.connect('studentquestionsai.db')
@@ -557,10 +563,13 @@ def question_QA_check(question_QA_response):
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
         generate_question()
+        return
     except ValueError as e:
         generate_question()
+        return
     except TypeError as e:
         generate_question()
+        return
     
     #data = json.loads(question_QA_response)
     if ( data['relevance_to_CCSS_standard'] < 4 or 
@@ -666,10 +675,13 @@ def feedback_QA_check(feedback_QA_response):
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
         generate_feedback()
+        return
     except ValueError as e:
         generate_feedback()
+        return
     except TypeError as e:
         generate_feedback()
+        return
     #data = json.loads(feedback_QA_response) 
     if ( data['relevance_to_students_response'] < 4 or 
         data['alignment_with_CCSS_standard'] < 4 or
@@ -687,12 +699,13 @@ def feedback_QA_check(feedback_QA_response):
     if (st.session_state.feedback_QA_result=="Fail" and st.session_state.feedback_QA_counter<st.session_state.max_feedback_QA_counter):
         #st.write(" regenerating feedback ")
         generate_feedback()
-    st.session_state.session_status='Show Feedback'    
+        return
     #st.write(" feedback ready to show ")
     load_feedback_display()
 
 #function to display the feedback generated    
 def load_feedback_display():    
+    st.session_state.session_status='Show Feedback'    
     st.markdown("### Here below is the feedback to your response")    
     st.write(st.session_state.feedback)
     st.markdown("### Here below are the Question and the response you submitted for your reference:")
