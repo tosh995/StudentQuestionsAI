@@ -326,11 +326,11 @@ def db_insert_question(question_QA_response,question_QA_result):
     try:
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
-    generate_question()
+        generate_question()
     except ValueError as e:
-    generate_question()
+        generate_question()
     except TypeError as e:
-    generate_question()
+        generate_question()
     #data = json.loads(question_QA_response)
 
     #global question
@@ -459,11 +459,11 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
     try:
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
-    generate_feedback()
+        generate_feedback()
     except ValueError as e:
-    generate_feedback()
+        generate_feedback()
     except TypeError as e:
-    generate_feedback()
+        generate_feedback()
     #data = json.loads(feedback_QA_response)
 
     conn = sqlite3.connect('studentquestionsai.db')
@@ -556,11 +556,11 @@ def question_QA_check(question_QA_response):
     try:
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
-    generate_question()
+        generate_question()
     except ValueError as e:
-    generate_question()
+        generate_question()
     except TypeError as e:
-    generate_question()
+        generate_question()
     
     #data = json.loads(question_QA_response)
     if ( data['relevance_to_CCSS_standard'] < 4 or 
@@ -665,11 +665,11 @@ def feedback_QA_check(feedback_QA_response):
     try:
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
-    generate_feedback()
+        generate_feedback()
     except ValueError as e:
-    generate_feedback()
+        generate_feedback()
     except TypeError as e:
-    generate_feedback()
+        generate_feedback()
     #data = json.loads(feedback_QA_response) 
     if ( data['relevance_to_students_response'] < 4 or 
         data['alignment_with_CCSS_standard'] < 4 or
