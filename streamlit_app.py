@@ -465,7 +465,7 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
     #st.write("Contents of the 'questions' table:")
     #st.dataframe(df)
     # Drop the table named 'feedback'
-    cursor.execute('DROP TABLE IF EXISTS feedback')
+    #cursor.execute('DROP TABLE IF EXISTS feedback')
 
     
 
@@ -624,7 +624,7 @@ def generate_feedback():
     feedback_prompt_with_inputs = feedback_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer)
     st.write("now calling LLM")
     #call LLM to generate feedback
-    feedback = llm(feedback_prompt_with_inputs)
+    st.session_state.feedback = llm(feedback_prompt_with_inputs)
     feedback_QA_prompt_with_inputs = feedback_QA_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer,feedback=st.session_state.feedback)
     #Call LLM to generate QA on Feedback 
     st.session_state.feedback_QA_response = llm(feedback_QA_prompt_with_inputs)
@@ -677,7 +677,7 @@ def load_welcome_page_initiator():
 #first function that loads the welcome screen for the tool
 def load_welcome_page():
     st.session_state.session_status='Topic Input'
-    st.header("AI Questions Generator1")
+    st.header("AI Questions Generator")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. I am powered by [LangChain](https://langchain.com/) and [OpenAI](https://openai.com) ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
