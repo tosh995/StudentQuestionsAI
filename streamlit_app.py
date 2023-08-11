@@ -98,7 +98,7 @@ question_QA_template = """
 """
 
 
-CCSS_standard_template = """Is {CCSS_standard} a valid CCSS standard? Answer only YES or NO."""
+CCSS_standard_template = """Is {CCSS_standard} a valid Common Core State Standard (CCSS) for English Language Arts (ELA) in the United States? Answer only YES or NO."""
 
 
 feedback_template = """You are the world best writing grader who is evaluating the writing of a student. Here below is the question and the rubrik that the student answered to:
