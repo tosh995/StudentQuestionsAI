@@ -284,6 +284,11 @@ feedback_QA_prompt = PromptTemplate(
     template=feedback_QA_template
 )
 
+# Clear the screen by updating the displayed content
+def clear_screen():
+    st.caching.clear_cache()  # Clear cache to reset components
+    st.text("")  # Display an empty text to "clear" the screen
+
 #function to reset the input screen
 def reset_question_input_page():
     st.session_state.topic1 = ""
@@ -706,6 +711,7 @@ def feedback_QA_check(feedback_QA_response):
 #function to display the feedback generated    
 def load_feedback_display():    
     st.session_state.session_status='Show Feedback'    
+    clear_screen()
     st.markdown("### Here below is the feedback to your response")    
     st.write(st.session_state.feedback)
     st.markdown("### Here below are the Question and the response you submitted for your reference:")
