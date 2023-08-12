@@ -286,7 +286,7 @@ feedback_QA_prompt = PromptTemplate(
 
 # Clear the screen by updating the displayed content
 def clear_screen():
-    st.caching.clear_cache()  # Clear cache to reset components
+    #st.caching.clear_cache()  # Clear cache to reset components
     st.text("")  # Display an empty text to "clear" the screen
 
 #function to reset the input screen
