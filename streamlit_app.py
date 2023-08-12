@@ -711,7 +711,7 @@ def feedback_QA_check(feedback_QA_response):
 #function to display the feedback generated    
 def load_feedback_display():    
     st.session_state.session_status='Show Feedback'    
-    clear_screen()
+    st.empty()
     st.markdown("### Here below is the feedback to your response")    
     st.write(st.session_state.feedback)
     st.markdown("### Here below are the Question and the response you submitted for your reference:")
