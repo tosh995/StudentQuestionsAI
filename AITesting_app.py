@@ -824,14 +824,12 @@ def load_welcome_page():
         st.button("Default Values", type='secondary', help="Click to use default values", on_click=default_question_input_page)
     with col6:
         st.button("AI AutoTesting", type='secondary', help="Click to use default values", on_click=autotesting)
-
-   
         
 if st.session_state.session_status == 'Topic Input': 
     load_welcome_page()
     
 def autotesting():
-    st.session_state.auto_testing = 'Yes'
+    #st.session_state.auto_testing = 'Yes'
     st.session_state.session_status == 'Auto Testing'
     st.header("AI Questions Generator - Auto Testing Mode")
     st.write ("Inititiating Auto Testing.....")
@@ -867,9 +865,9 @@ def autotesting():
             testing_output_1_check_with_inputs = testing_output_1_check.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,output = st.session_state.captured_stderr)
             #call LLM to evaluate output
             testing_output_1_check_results=llm(testing_output_1_check_with_inputs)
-            if testing_output_1_check_results in ("Yes", "Yes.", "YES","YES.")
+            if testing_output_1_check_results in ("Yes", "Yes.", "YES","YES."):
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] = 5
-            else 
+            else: 
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] = 0
             st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] = "N/A"        
             st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] = 0 
@@ -879,7 +877,7 @@ def autotesting():
             cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.question_QA_response)
             question_qa_data = json.loads(cleaned_string)
             st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] = question_qa_data['overall_quality']
-        if st.session_state.question    
+        if st.session_state.question:    
             #generating a random number between 1 and 10 to create an answer that score that much out of 10
             st.session_state.testing_info [st.session_state.test_number-1] ["target_score"] = random.randint(1, 10)
             #setting up prompt to generate an answer for testing
@@ -925,13 +923,13 @@ def db_insert_testing_results():
     try:
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
-        st.message("Error while loading testing results into the database:")
+        st.message("Error while loading testing results into the database")
         return
     except ValueError as e:
-        st.message("Error while loading testing results into the database:")
+        st.message("Error while loading testing results into the database")
         return
     except TypeError as e:
-        st.message("Error while loading testing results into the database:")
+        st.message("Error while loading testing results into the database")
         return
 
     # Connect to the SQLite database
@@ -943,6 +941,7 @@ def db_insert_testing_results():
         CREATE TABLE IF NOT EXISTS auto_testing_results (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             test_run INTEGER,
+            test_case INTEGER,
             topic TEXT,
             CCSS_standard TEXT,
             output_1 TEXT,
@@ -954,17 +953,27 @@ def db_insert_testing_results():
         )
     ''')
 
+    # Get the existing value of test_run from the table
+    cursor.execute('SELECT MAX(test_run) FROM auto_testing_results')
+    existing_test_run = cursor.fetchone()[0]
+
+    # If the table is empty or test_run is None, set it to 1, otherwise increment by 1
+    if existing_test_run is None:
+        new_test_run = 1
+    else:
+        new_test_run = existing_test_run + 1
+
     # Insert the data into the table
     
     # Iterate through the data JSON object and insert data into the table
     for counter, row in enumerate(data, start=1):
     query = '''
         INSERT INTO auto_testing_results 
-        (test_case, topic, CCSS_standard, output_1, output_1_quality, answer, output_2, output_2_quality, test_result, load_date_time)
+        (test_run, test_case, topic, CCSS_standard, output_1, output_1_quality, answer, output_2, output_2_quality, test_result, load_date_time)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     '''
     data_tuple = (
-        counter, row['topic'], row['CCSS_standard'], row['output_1'], 
+        new_test_run, counter, row['topic'], row['CCSS_standard'], row['output_1'], 
         row['output_1_quality'], row['answer'], row['output_2'], row['output_2_quality'], 
         row['test_result']
     )
