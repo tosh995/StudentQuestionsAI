@@ -663,29 +663,31 @@ def question_QA_check(question_QA_response):
 
 #process to generate question starts on clining the generate question button 
 def generate_question_button_click():       
-    if st.session_state.topic:
-        if not st.session_state.CCSS_standard:
-            st.warning('Please enter a writing CCSS standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W)', icon="⚠️")
-            return
-        CCSS_standard_prompt_with_inputs = CCSS_standard_prompt.format(CCSS_standard=st.session_state.CCSS_standard)
-        st.session_state.CCSS_standard_response = llm(CCSS_standard_prompt_with_inputs)
-        if st.session_state.CCSS_standard_response in ["No", "NO", "No.", "NO."]:
-            st.warning("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",icon="⚠️")
-            #st.write(st.session_state.CCSS_standard)
-            return
-        topic_prompt_with_inputs = topic_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard)
-        st.session_state.topic_response = llm(topic_prompt_with_inputs)
-        if st.session_state.topic_response in ["No", "NO", "No.", "NO."]:
-            st.warning("It seems this topic isn't appropriate for writing assessment. Please re-enter the topic.",icon="⚠️")
-            #st.write(st.session_state.topic)
-            return
-        st.session_state.question_QA_counter=0
-        st.session_state.question=""
-        st.session_state.question_QA_result=""       
-        st.session_state.question_QA_response=""
-        generate_question()
-        st.session_state.session_status='Answer Input'
-        load_question_display()
+    if not st.session_state.topic:
+        st.warning('Please enter a topic.', icon="⚠️")
+        return
+    if not st.session_state.CCSS_standard:
+        st.warning('Please enter a writing CCSS standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W)', icon="⚠️")
+        return
+    CCSS_standard_prompt_with_inputs = CCSS_standard_prompt.format(CCSS_standard=st.session_state.CCSS_standard)
+    st.session_state.CCSS_standard_response = llm(CCSS_standard_prompt_with_inputs)
+    if st.session_state.CCSS_standard_response in ["No", "NO", "No.", "NO."]:
+        st.warning("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",icon="⚠️")
+        #st.write(st.session_state.CCSS_standard)
+        return
+    topic_prompt_with_inputs = topic_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard)
+    st.session_state.topic_response = llm(topic_prompt_with_inputs)
+    if st.session_state.topic_response in ["No", "NO", "No.", "NO."]:
+        st.warning("It seems this topic isn't appropriate for writing assessment. Please re-enter the topic.",icon="⚠️")
+        #st.write(st.session_state.topic)
+        return
+    st.session_state.question_QA_counter=0
+    st.session_state.question=""
+    st.session_state.question_QA_result=""       
+    st.session_state.question_QA_response=""
+    generate_question()
+    st.session_state.session_status='Answer Input'
+    load_question_display()
         
         
 def load_question_display():        
@@ -967,18 +969,18 @@ def db_insert_testing_results():
     
     # Iterate through the data JSON object and insert data into the table
     for counter, row in enumerate(data, start=1):
-    query = '''
-        INSERT INTO auto_testing_results 
-        (test_run, test_case, topic, CCSS_standard, output_1, output_1_quality, answer, output_2, output_2_quality, test_result, load_date_time)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-    '''
-    data_tuple = (
-        new_test_run, counter, row['topic'], row['CCSS_standard'], row['output_1'], 
-        row['output_1_quality'], row['answer'], row['output_2'], row['output_2_quality'], 
-        row['test_result']
-    )
-    cursor.execute(query, data_tuple)
-    
+        query = '''
+            INSERT INTO auto_testing_results 
+            (test_run, test_case, topic, CCSS_standard, output_1, output_1_quality, answer, output_2, output_2_quality, test_result, load_date_time)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        '''
+        data_tuple = (
+            new_test_run, counter, row['topic'], row['CCSS_standard'], row['output_1'], 
+            row['output_1_quality'], row['answer'], row['output_2'], row['output_2_quality'], 
+            row['test_result']
+        )
+        cursor.execute(query, data_tuple)
+        
     # Commit changes and close the connection
     conn.commit()
     conn.close()
