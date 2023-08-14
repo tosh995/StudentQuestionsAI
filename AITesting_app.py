@@ -2,12 +2,12 @@ import streamlit as st
 import sqlite3
 import json
 from langchain import PromptTemplate
-from langchain.llms import OpenAI
+#from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
 import pandas as pd
 from datetime import datetime
 import re
 import random
-
 
 
 
@@ -260,7 +260,7 @@ def clear_screen():
 
 def load_LLM(openai_api_key):
     """Logic for loading the chain"""
-    llm = OpenAI(model_name="gpt-3.5-turbo",temperature=0.6, openai_api_key=openai_api_key)
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo",temperature=0.6, openai_api_key=openai_api_key)
     return llm
 
 #counters for how many QA attempts has been made
@@ -341,7 +341,7 @@ feedback_QA_prompt = PromptTemplate(
 
 
 testing_topic_CCSS_prompt = PromptTemplate(
-    input_variables=["topic", "CCSS_standard"],
+    #input_variables=["topic", "CCSS_standard"],
     template=testing_topic_CCSS_template
 )
 
@@ -839,9 +839,9 @@ def autotesting():
     db_insert_start_autotesting()
     st.write ("Step 1. Autogenerating " + st.session_state.testing_count + "Topics and CCSS Standard input value pairs...")
     #setting up prompt to generate autotesting inputs
-    testing_generate_topic_CCSS_prompt_with_inputs = testing_generate_topic_CCSS_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard)
+    testing_topic_CCSS_prompt_with_inputs = testing_topic_CCSS_prompt.format()
     #call LLM to generate inputs
-    st.session_state.testing_info = llm(testing_generate_topic_CCSS_prompt_with_inputs)
+    st.session_state.testing_info = llm(testing_topic_CCSS_prompt_with_inputs)
     st.write ("Step 2. Now starting run cycles....")
     for st.session_state.test_number in range(1, st.session_state.testing_count+1):
         st.write ("Step 2."+ test_number + " started...")
