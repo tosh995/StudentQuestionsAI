@@ -847,7 +847,7 @@ def autotesting():
         st.write ("Step 2."+ test_number + " started...")
         #assigning the input values for the run cycle
         st.session_state.topic = st.session_state.testing_info [st.session_state.test_number-1] ["Topic"]
-        st.session_state.CCSS_standard =  = st.session_state.testing_info [st.session_state.test_number-1] ["CCSS"]
+        st.session_state.CCSS_standard = st.session_state.testing_info [st.session_state.test_number-1] ["CCSS"]
         captured_stdout=""
         captured_stderr=""
         #redirecting the output buffer and error buffers for analysis
