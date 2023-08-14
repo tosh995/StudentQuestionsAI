@@ -218,7 +218,7 @@ Provide your response in the following JSON format. Do not output any other info
 """
 
 testing_topic_CCSS_template = """
-        You are testing a tool that takes 2 inputs - a topic of interest and a writing Common Core State Standard (CCSS) for English Language Arts (ELA) and generates a question related to that topic to test that standard. Your job is to generate 50 pairs of input values for testing the tool. Include some bad inputs (such as invalid CCSS standard or topic that is longer than 6 words or topic that is inappropriate for the student etc.) to see how the tool reacts. Generate your output in the following JSON format. 
+        You are testing a tool that takes  inputs - a topic of interest and a writing Common Core State Standard (CCSS) for English Language Arts (ELA) and generates a question related to that topic to test that standard. Your job is to generate {testing_count} pairs of input values for testing the tool. Include some bad inputs (such as invalid CCSS standard or topic that is longer than 6 words or topic that is inappropriate for the student etc.) to see how the tool reacts. Generate your output in the following JSON format. 
         {"Topic": "History", "CCSS": "CCSS.ELA-LITERACY.W.5.2"},
         {"Topic": "Science", "CCSS": "CCSS.ELA-LITERACY.W.4.1"},
         {"Topic": "Religion", "CCSS": "CCSS.ELA-LITERACY.W.6.3"},
@@ -341,7 +341,7 @@ feedback_QA_prompt = PromptTemplate(
 
 
 testing_topic_CCSS_prompt = PromptTemplate(
-    #input_variables=["topic", "CCSS_standard"],
+    input_variables=["testing_count", testing_count],
     template=testing_topic_CCSS_template
 )
 
