@@ -341,7 +341,7 @@ feedback_QA_prompt = PromptTemplate(
 
 
 testing_topic_CCSS_prompt = PromptTemplate(
-    input_variables=["testing_count", testing_count],
+    input_variables=["testing_count"],
     template=testing_topic_CCSS_template
 )
 
@@ -839,7 +839,7 @@ def autotesting():
     db_insert_start_autotesting()
     st.write ("Step 1. Autogenerating " + st.session_state.testing_count + "Topics and CCSS Standard input value pairs...")
     #setting up prompt to generate autotesting inputs
-    testing_topic_CCSS_prompt_with_inputs = testing_topic_CCSS_prompt.format()
+    testing_topic_CCSS_prompt_with_inputs = testing_topic_CCSS_prompt.format(testing_count = st.session_state.testing_count)
     #call LLM to generate inputs
     st.session_state.testing_info = llm(testing_topic_CCSS_prompt_with_inputs)
     st.write ("Step 2. Now starting run cycles....")
