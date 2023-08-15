@@ -3,13 +3,14 @@ import sqlite3
 import json
 from langchain import PromptTemplate
 #from langchain.llms import OpenAI
-from langchain.chat_models import ChatOpenAI
+from langchain.llms import OpenAI
 import pandas as pd
 from datetime import datetime
 import re
 import random
-
-
+import contextlib
+import time
+import io
 
 api_key = st.secrets["api_key"]
 st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
@@ -219,11 +220,11 @@ Provide your response in the following JSON format. Do not output any other info
 
 testing_topic_CCSS_template = """
         You are testing a tool that takes  inputs - a topic of interest and a writing Common Core State Standard (CCSS) for English Language Arts (ELA) and generates a question related to that topic to test that standard. Your job is to generate {testing_count} pairs of input values for testing the tool. Include some bad inputs (such as invalid CCSS standard or topic that is longer than 6 words or topic that is inappropriate for the student etc.) to see how the tool reacts. Generate your output in the following JSON format. 
-        {"Topic": "History", "CCSS": "CCSS.ELA-LITERACY.W.5.2"},
-        {"Topic": "Science", "CCSS": "CCSS.ELA-LITERACY.W.4.1"},
-        {"Topic": "Religion", "CCSS": "CCSS.ELA-LITERACY.W.6.3"},
-        {"Topic": "Mathematics", "CCSS": "CCSS.ELA-LITERACY.W.3.4"},
-        {"Topic": "Politics", "CCSS": "CCSS.ELA-LITERACY.W.7.2"}.....
+        "Topic": "History", "CCSS": "CCSS.ELA-LITERACY.W.5.2",
+        "Topic": "Science", "CCSS": "CCSS.ELA-LITERACY.W.4.1",
+        "Topic": "Religion", "CCSS": "CCSS.ELA-LITERACY.W.6.3",
+        "Topic": "Mathematics", "CCSS": "CCSS.ELA-LITERACY.W.3.4",
+        "Topic": "Politics", "CCSS": "CCSS.ELA-LITERACY.W.7.2".....
 """
 
 testing_output_1_check_template ="""
@@ -260,7 +261,7 @@ def clear_screen():
 
 def load_LLM(openai_api_key):
     """Logic for loading the chain"""
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo",temperature=0.6, openai_api_key=openai_api_key)
+    llm = OpenAI(model_name="gpt-3.5-turbo",temperature=0.6, openai_api_key=openai_api_key)
     return llm
 
 #counters for how many QA attempts has been made
@@ -385,10 +386,11 @@ def get_CCSS_standard():
 #function to get the student's answer from the input screen
 def get_answer():
     input_answer = st.text_area(label=" ", placeholder="Type your response here...2000 words max", key="answer_input", height=500)
-    st.session_state.session_status='Answer Ready'
     if len(input_answer.split(" ")) > 2000:
         st.write("Please enter a shorter answer. The maximum length is 2000 words.")
         return
+    if st.session_state.session_status != 'Auto Testing':
+        st.session_state.session_status='Answer Ready'
     return input_answer 
 
 
@@ -656,7 +658,6 @@ def question_QA_check(question_QA_response):
     else:
         st.session_state.question_QA_result="Pass"
     db_insert_question(question_QA_response,st.session_state.question_QA_result) #load the question with its QA information to Question table
-   
    #continue generating question if the QA fails until we reach the max limit 
     if (st.session_state.question_QA_result=="Fail" and st.session_state.question_QA_counter<st.session_state.max_question_QA_counter):
         generate_question()
@@ -673,24 +674,26 @@ def generate_question_button_click():
     st.session_state.CCSS_standard_response = llm(CCSS_standard_prompt_with_inputs)
     if st.session_state.CCSS_standard_response in ["No", "NO", "No.", "NO."]:
         st.warning("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",icon="⚠️")
-        #st.write(st.session_state.CCSS_standard)
+        st.write(st.session_state.CCSS_standard)
         return
     topic_prompt_with_inputs = topic_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard)
     st.session_state.topic_response = llm(topic_prompt_with_inputs)
     if st.session_state.topic_response in ["No", "NO", "No.", "NO."]:
         st.warning("It seems this topic isn't appropriate for writing assessment. Please re-enter the topic.",icon="⚠️")
-        #st.write(st.session_state.topic)
+        st.write(st.session_state.topic)
         return
     st.session_state.question_QA_counter=0
     st.session_state.question=""
     st.session_state.question_QA_result=""       
     st.session_state.question_QA_response=""
     generate_question()
-    st.session_state.session_status='Answer Input'
-    load_question_display()
+    
+    if st.session_state.session_status != 'Auto Testing':
+        load_question_display()
         
         
-def load_question_display():        
+def load_question_display():    
+        st.session_state.session_status='Answer Input'
         st.header("AI Questions Generator")
         st.markdown("### Here is your question:")
         #st.write(question_QA_response)
@@ -782,7 +785,8 @@ def feedback_QA_check(feedback_QA_response):
         generate_feedback()
         return
     #st.write(" feedback ready to show ")
-    load_feedback_display()
+    if st.session_state.session_status != 'Auto Testing':
+        load_feedback_display()
 
 #function to display the feedback generated    
 def load_feedback_display():    
@@ -796,55 +800,48 @@ def load_feedback_display():
     st.button("Get Another Question", help="Click to get another question", on_click=load_welcome_page_initiator)
 
 
+
+
+
+
+
 def load_welcome_page_initiator():
     st.session_state.session_status='Topic Input'
     
     
-#first function that loads the welcome screen for the tool
-def load_welcome_page():
-    st.session_state.question_QA_counter = 0
-    st.session_state.feedback_QA_counter = 0
-    st.session_state.question = ""
-    st.session_state.question_QA_result = ""
-    st.session_state.answer = ""
-    st.session_state.feedback = ""
-    st.session_state.feedback_QA_result = ""
-    st.session_state.feedback_QA_response = ""
-    st.session_state.question_last_id = ""
-    st.session_state.answer_last_id = ""    
-    st.header("AI Questions Generator")
-    st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. The student can then submit a response to the question and I will provide feedback to the student's response. ")
-    st.markdown("## Enter your preferences")
-    st.session_state.CCSS_standard = get_CCSS_standard()
-    st.session_state.topic = get_topic()
-    col3, col4, col5, col6 = st.columns(4)    
-    with col3:
-        st.button("Generate Question",type='secondary', help="Click to generate a question", on_click=generate_question_button_click)
-    with col4:
-        st.button("Reset", type='secondary', help="Click to reset the page", on_click=reset_question_input_page)
-    with col5:
-        st.button("Default Values", type='secondary', help="Click to use default values", on_click=default_question_input_page)
-    with col6:
-        st.button("AI AutoTesting", type='secondary', help="Click to use default values", on_click=autotesting)
-        
-if st.session_state.session_status == 'Topic Input': 
-    load_welcome_page()
     
 def autotesting():
     #st.session_state.auto_testing = 'Yes'
-    st.session_state.session_status == 'Auto Testing'
+    st.session_state.session_status = 'Auto Testing'
     st.header("AI Questions Generator - Auto Testing Mode")
     st.write ("Inititiating Auto Testing.....")
+    #time.sleep(5)
     #record testing run details
-    db_insert_start_autotesting()
-    st.write ("Step 1. Autogenerating " + st.session_state.testing_count + "Topics and CCSS Standard input value pairs...")
+    #db_insert_start_autotesting()
+    st.write ("Step 1. Autogenerating " + str(st.session_state.testing_count) + " Topics and CCSS Standard input value pairs...")
     #setting up prompt to generate autotesting inputs
     testing_topic_CCSS_prompt_with_inputs = testing_topic_CCSS_prompt.format(testing_count = st.session_state.testing_count)
     #call LLM to generate inputs
-    st.session_state.testing_info = llm(testing_topic_CCSS_prompt_with_inputs)
+    st.session_state.testing_inputs = llm(testing_topic_CCSS_prompt_with_inputs)
+    #load the LLM output into a clean string
+    cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.testing_inputs)
+    try:
+        st.session_state.testing_info = json.loads(cleaned_string)
+    except json.JSONDecodeError as e:
+        st.warning("JSONDecodeError while accessing testing inputs")
+        st.write (cleaned_string)
+        return
+    except ValueError as e:
+        st.warning("ValueError while accessing testing inputs")
+        st.write (cleaned_string)
+        return
+    except TypeError as e:
+        st.warning("TypeError while accessing testing inputs")
+        st.write (cleaned_string)
+        return
     st.write ("Step 2. Now starting run cycles....")
     for st.session_state.test_number in range(1, st.session_state.testing_count+1):
-        st.write ("Step 2."+ test_number + " started...")
+        st.write ("Step 2."+ str(st.session_state.test_number) + " started...")
         #assigning the input values for the run cycle
         st.session_state.topic = st.session_state.testing_info [st.session_state.test_number-1] ["Topic"]
         st.session_state.CCSS_standard = st.session_state.testing_info [st.session_state.test_number-1] ["CCSS"]
@@ -877,15 +874,25 @@ def autotesting():
         else:
             st.session_state.testing_info [st.session_state.test_number-1] ["output_1"] = captured_stdout   
             cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.question_QA_response)
-            question_qa_data = json.loads(cleaned_string)
+            try:
+                    question_qa_data = json.loads(cleaned_string)
+                except json.JSONDecodeError as e:
+                    generate_question()
+                    return
+                except ValueError as e:
+                    generate_question()
+                    return
+                except TypeError as e:
+                    generate_question()
+                    return
             st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] = question_qa_data['overall_quality']
         if st.session_state.question:    
             #generating a random number between 1 and 10 to create an answer that score that much out of 10
             st.session_state.testing_info [st.session_state.test_number-1] ["target_score"] = random.randint(1, 10)
             #setting up prompt to generate an answer for testing
-            testing_generate_answer_with_inputs = testing_generate_answer.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question = st.session_state.question, target_score = st.session_state.testing_info [st.session_state.test_number-1] ["target_score"])
+            testing_answer_prompt_with_inputs = testing_answer_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question = st.session_state.question, target_score = st.session_state.testing_info [st.session_state.test_number-1] ["target_score"])
             #call LLM to generate inputs
-            st.session_state.testing_info [st.session_state.test_number-1] ["answer"] = llm (testing_generate_answer_with_inputs)
+            st.session_state.testing_info [st.session_state.test_number-1] ["answer"] = llm (testing_answer_prompt_with_inputs)
             captured_stdout=""
             captured_stderr=""
             with contextlib.redirect_stdout(io.StringIO()) as stdout_buf, contextlib.redirect_stderr(io.StringIO()) as stderr_buf:
@@ -900,7 +907,17 @@ def autotesting():
             else: 
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] = captured_stdout 
                 cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.feedback_QA_response)
-                feedback_qa_data = json.loads(cleaned_string)
+                try:
+                    feedback_qa_data = json.loads(cleaned_string)
+                except json.JSONDecodeError as e:
+                    generate_feedback()
+                    return
+                except ValueError as e:
+                    generate_feedback()
+                    return
+                except TypeError as e:
+                    generate_feedback()
+                    return
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] = feedback_qa_data['overall_quality']
             if (st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] > 3 and st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] > 3 ) or (st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] > 3 and st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] == "N/A"):
                 st.session_state.testing_info [st.session_state.test_number-1] ["test_result"] = "Pass"
@@ -925,13 +942,13 @@ def db_insert_testing_results():
     try:
         data = json.loads(cleaned_string)
     except json.JSONDecodeError as e:
-        st.message("Error while loading testing results into the database")
+        st.warning("Error while loading testing results into the database")
         return
     except ValueError as e:
-        st.message("Error while loading testing results into the database")
+        st.warning("Error while loading testing results into the database")
         return
     except TypeError as e:
-        st.message("Error while loading testing results into the database")
+        st.warning("Error while loading testing results into the database")
         return
 
     # Connect to the SQLite database
@@ -984,3 +1001,34 @@ def db_insert_testing_results():
     # Commit changes and close the connection
     conn.commit()
     conn.close()
+    
+    
+#first function that loads the welcome screen for the tool
+def load_welcome_page():
+    st.session_state.question_QA_counter = 0
+    st.session_state.feedback_QA_counter = 0
+    st.session_state.question = ""
+    st.session_state.question_QA_result = ""
+    st.session_state.answer = ""
+    st.session_state.feedback = ""
+    st.session_state.feedback_QA_result = ""
+    st.session_state.feedback_QA_response = ""
+    st.session_state.question_last_id = ""
+    st.session_state.answer_last_id = ""    
+    st.header("AI Questions Generator")
+    st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. The student can then submit a response to the question and I will provide feedback to the student's response. ")
+    st.markdown("## Enter your preferences")
+    st.session_state.CCSS_standard = get_CCSS_standard()
+    st.session_state.topic = get_topic()
+    col3, col4, col5, col6 = st.columns(4)    
+    with col3:
+        st.button("Generate Question",type='secondary', help="Click to generate a question", on_click=generate_question_button_click)
+    with col4:
+        st.button("Reset", type='secondary', help="Click to reset the page", on_click=reset_question_input_page)
+    with col5:
+        st.button("Default Values", type='secondary', help="Click to use default values", on_click=default_question_input_page)
+    with col6:
+        st.button("AI AutoTesting", type='secondary', help="Click to use default values", on_click=autotesting)
+        
+if st.session_state.session_status == 'Topic Input': 
+    load_welcome_page()
