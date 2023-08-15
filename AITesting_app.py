@@ -303,7 +303,7 @@ if "session_status" not in st.session_state:
     st.session_state.session_status='Topic Input'
 
 if 'testing_count' not in st.session_state:
-    st.session_state.testing_count = 50
+    st.session_state.testing_count = 5
 
 llm = load_LLM(openai_api_key=api_key)
 
@@ -396,10 +396,21 @@ def get_answer():
 
 #function to insert the Question and its QA information into Question table
 def db_insert_question(question_QA_response,question_QA_result):
-    cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
+    #cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
+    #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in st.session_state.testing_info]
+    cleaned_question_QA_response = []
+    for row in question_QA_response:
+        cleaned_row = {}
+        for key, value in row.items():
+            if isinstance(value, str):
+                cleaned_value = re.sub(r'[\x00-\x1F]+', '', value)
+                cleaned_row[key] = cleaned_value
+            else:
+                cleaned_row[key] = value
+    cleaned_question_QA_response.append(cleaned_row)
     #data = json.loads(cleaned_string)
     try:
-        data = json.loads(cleaned_string)
+        data = json.loads(cleaned_question_QA_response)
     except json.JSONDecodeError as e:
         generate_question()
         return
@@ -532,10 +543,11 @@ def db_insert_answer():
 
 #function to load the feedback into the feedback table
 def db_insert_feedback(feedback_QA_response,feedback_QA_result):
-    cleaned_string = re.sub(r'[\x00-\x1F]+', '', feedback_QA_response)
+    #cleaned_string = re.sub(r'[\x00-\x1F]+', '', feedback_QA_response)
+    cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in feedback_QA_response]
     #data = json.loads(cleaned_string)
     try:
-        data = json.loads(cleaned_string)
+        data = json.loads(cleaned_list)
     except json.JSONDecodeError as e:
         generate_feedback()
         return
@@ -632,10 +644,11 @@ def generate_question():
 def question_QA_check(question_QA_response):
     st.session_state.question_QA_counter += 1
     # Parse the JSON string into a dictionary
-    cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
+    #cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
+    cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in question_QA_response]
     #data = json.loads(cleaned_string)
     try:
-        data = json.loads(cleaned_string)
+        data = json.loads(cleaned_list)
     except json.JSONDecodeError as e:
         generate_question()
         return
@@ -689,11 +702,11 @@ def generate_question_button_click():
     generate_question()
     
     if st.session_state.session_status != 'Auto Testing':
+        st.session_state.session_status='Answer Input'
         load_question_display()
         
         
 def load_question_display():    
-        st.session_state.session_status='Answer Input'
         st.header("AI Questions Generator")
         st.markdown("### Here is your question:")
         #st.write(question_QA_response)
@@ -722,11 +735,12 @@ def load_question_display1():
 
 #function to respond to submission of the feedback_QA_counter Answer by the student on clicking the submit button 
 def generate_feedback_button_click():
-    st.session_state.session_status='Show Feedback'
     #st.write(st.session_state.session_status)
-    st.header("AI Questions Generator")
-    st.write("Thank you for submitting your response. Your feedback is being generated....")
     if st.session_state.answer:
+        if st.session_state.session_status != 'Auto Testing':
+            st.session_state.session_status='Show Feedback'
+            st.header("AI Questions Generator")
+            st.write("Thank you for submitting your response. Your feedback is being generated....")
         #st.write(st.session_state.answer)
         #load the answer into the answer table
         db_insert_answer()  
@@ -753,10 +767,11 @@ def generate_feedback():
 def feedback_QA_check(feedback_QA_response):
     st.session_state.feedback_QA_counter +=1
     # Parse the JSON string into a dictionary
-    cleaned_string = re.sub(r'[\x00-\x1F]+', '', feedback_QA_response)
+    #cleaned_string = re.sub(r'[\x00-\x1F]+', '', feedback_QA_response)
+    cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in feedback_QA_response]
     #data = json.loads(cleaned_string)
     try:
-        data = json.loads(cleaned_string)
+        data = json.loads(cleaned_list)
     except json.JSONDecodeError as e:
         generate_feedback()
         return
@@ -786,11 +801,12 @@ def feedback_QA_check(feedback_QA_response):
         return
     #st.write(" feedback ready to show ")
     if st.session_state.session_status != 'Auto Testing':
+        st.session_state.session_status='Show Feedback'
         load_feedback_display()
 
 #function to display the feedback generated    
 def load_feedback_display():    
-    st.session_state.session_status='Show Feedback'    
+        
     st.markdown("### Here below is the feedback to your response")    
     st.write(st.session_state.feedback)
     st.markdown("### Here below are the Question and the response you submitted for your reference:")
@@ -824,21 +840,35 @@ def autotesting():
     #call LLM to generate inputs
     st.session_state.testing_inputs = llm(testing_topic_CCSS_prompt_with_inputs)
     #load the LLM output into a clean string
-    cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.testing_inputs)
+    #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.testing_inputs)
+    cleaned_testing_info = []
+    for row in st.session_state.testing_inputs:
+        # Check if row is a dictionary before processing
+        if not isinstance(row, dict):
+            continue
+        cleaned_row = {}
+        for key, value in row.items():
+            if isinstance(value, str):
+                cleaned_value = re.sub(r'[\x00-\x1F]+', '', value)
+                cleaned_row[key] = cleaned_value
+            else:
+                cleaned_row[key] = value
+        cleaned_testing_info.append(cleaned_row)
     try:
-        st.session_state.testing_info = json.loads(cleaned_string)
+        st.session_state.testing_info = json.loads(st.session_state.testing_inputs)
     except json.JSONDecodeError as e:
         st.warning("JSONDecodeError while accessing testing inputs")
-        st.write (cleaned_string)
+        st.write (cleaned_testing_info)
         return
     except ValueError as e:
         st.warning("ValueError while accessing testing inputs")
-        st.write (cleaned_string)
+        st.write (cleaned_testing_info)
         return
     except TypeError as e:
         st.warning("TypeError while accessing testing inputs")
-        st.write (cleaned_string)
+        st.write (cleaned_testing_info)
         return
+    st.write(json.dumps(st.session_state.testing_info, indent=4))    
     st.write ("Step 2. Now starting run cycles....")
     for st.session_state.test_number in range(1, st.session_state.testing_count+1):
         st.write ("Step 2."+ str(st.session_state.test_number) + " started...")
@@ -873,18 +903,19 @@ def autotesting():
             continue
         else:
             st.session_state.testing_info [st.session_state.test_number-1] ["output_1"] = captured_stdout   
-            cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.question_QA_response)
+            #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.question_QA_response)
+            cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in question_QA_response]
             try:
-                    question_qa_data = json.loads(cleaned_string)
-                except json.JSONDecodeError as e:
-                    generate_question()
-                    return
-                except ValueError as e:
-                    generate_question()
-                    return
-                except TypeError as e:
-                    generate_question()
-                    return
+                question_qa_data = json.loads(cleaned_list)
+            except json.JSONDecodeError as e:
+                generate_question()
+                return
+            except ValueError as e:
+                generate_question()
+                return
+            except TypeError as e:
+                generate_question()
+                return
             st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] = question_qa_data['overall_quality']
         if st.session_state.question:    
             #generating a random number between 1 and 10 to create an answer that score that much out of 10
@@ -893,6 +924,7 @@ def autotesting():
             testing_answer_prompt_with_inputs = testing_answer_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question = st.session_state.question, target_score = st.session_state.testing_info [st.session_state.test_number-1] ["target_score"])
             #call LLM to generate inputs
             st.session_state.testing_info [st.session_state.test_number-1] ["answer"] = llm (testing_answer_prompt_with_inputs)
+            st.session_state.answer = st.session_state.testing_info [st.session_state.test_number-1] ["answer"]
             captured_stdout=""
             captured_stderr=""
             with contextlib.redirect_stdout(io.StringIO()) as stdout_buf, contextlib.redirect_stderr(io.StringIO()) as stderr_buf:
@@ -906,9 +938,10 @@ def autotesting():
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] ="N/A"    
             else: 
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] = captured_stdout 
-                cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.feedback_QA_response)
+                #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.feedback_QA_response)
+                cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in feedback_QA_response]
                 try:
-                    feedback_qa_data = json.loads(cleaned_string)
+                    feedback_qa_data = json.loads(cleaned_list)
                 except json.JSONDecodeError as e:
                     generate_feedback()
                     return
@@ -937,10 +970,25 @@ def autotesting():
 def db_insert_testing_results():    
 
     #load the testing results into a clean string
-    cleaned_string = re.sub(r'[\x00-\x1F]+', '', testing_info)
+    #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.testing_info)
+    #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in st.session_state.testing_info] - for list
+    """cleaned_testing_info = []
+    for row in st.session_state.testing_info:
+        # Check if row is a dictionary before processing
+        if not isinstance(row, dict):
+            continue
+        cleaned_row = {}
+        for key, value in row.items():
+            if isinstance(value, str):
+                cleaned_value = re.sub(r'[\x00-\x1F]+', '', value)
+                cleaned_row[key] = cleaned_value
+            else:
+                cleaned_row[key] = value
+        cleaned_testing_info.append(cleaned_row)"""
+
     #data = json.loads(cleaned_string)
     try:
-        data = json.loads(cleaned_string)
+        data = json.loads(st.session_state.testing_info)
     except json.JSONDecodeError as e:
         st.warning("Error while loading testing results into the database")
         return
