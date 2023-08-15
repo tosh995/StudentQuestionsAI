@@ -841,7 +841,8 @@ def autotesting():
     st.session_state.testing_inputs = llm(testing_topic_CCSS_prompt_with_inputs)
     #load the LLM output into a clean string
     #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.testing_inputs)
-    """cleaned_testing_info = []
+    """
+    cleaned_testing_info = []
     for row in st.session_state.testing_inputs:
         # Check if row is a dictionary before processing
         if not isinstance(row, dict):
@@ -853,20 +854,21 @@ def autotesting():
                 cleaned_row[key] = cleaned_value
             else:
                 cleaned_row[key] = value
-        cleaned_testing_info.append(cleaned_row)"""
+        cleaned_testing_info.append(cleaned_row)
+    """
     try:
         st.session_state.testing_info = json.loads(st.session_state.testing_inputs)
     except json.JSONDecodeError as e:
         st.warning("JSONDecodeError while accessing testing inputs")
-        st.write (cleaned_testing_info)
+        st.write (st.session_state.testing_inputs)
         return
     except ValueError as e:
         st.warning("ValueError while accessing testing inputs")
-        st.write (cleaned_testing_info)
+        st.write (st.session_state.testing_inputs)
         return
     except TypeError as e:
         st.warning("TypeError while accessing testing inputs")
-        st.write (cleaned_testing_info)
+        st.write (st.session_state.testing_inputs)
         return
     st.write(json.dumps(st.session_state.testing_info, indent=4))    
     st.write ("Step 2. Now starting run cycles....")
@@ -906,15 +908,18 @@ def autotesting():
             #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.question_QA_response)
             #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in question_QA_response]
             try:
-                question_qa_data = json.loads(question_QA_response)
+                question_qa_data = json.loads(st.session_state.question_QA_response)
             except json.JSONDecodeError as e:
-                generate_question()
+                st.warning("JSONDecodeError while accessing question_QA_response")
+                st.write (st.session_state.question_QA_response)
                 return
             except ValueError as e:
-                generate_question()
+                st.warning("ValueError while accessing question_QA_response")
+                st.write (st.session_state.question_QA_response)
                 return
             except TypeError as e:
-                generate_question()
+                st.warning("TypeError while accessing question_QA_response")
+                st.write (st.session_state.question_QA_response)
                 return
             st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] = question_qa_data['overall_quality']
         if st.session_state.question:    
