@@ -944,17 +944,17 @@ def autotesting():
                     feedback_qa_data = json.loads(feedback_QA_response)
                 except json.JSONDecodeError as e:
                     #generate_feedback()
-                    st.write(JSONDecodeError occured while evaluating feedback QA response)
+                    st.write("JSONDecodeError occured while evaluating feedback QA response")
                     st.write (feedback_QA_response)
                     return
                 except ValueError as e:
                     #generate_feedback()
-                    st.write(ValueError occured while evaluating feedback QA response)
+                    st.write("ValueError occured while evaluating feedback QA response")
                     st.write (feedback_QA_response)
                     return
                 except TypeError as e:
                     #generate_feedback()
-                    st.write(TypeError occured while evaluating feedback QA response)
+                    st.write("TypeError occured while evaluating feedback QA response")
                     st.write (feedback_QA_response)
                     return
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] = feedback_qa_data['overall_quality']
