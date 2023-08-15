@@ -323,7 +323,7 @@ CCSS_standard_prompt = PromptTemplate(
 )
 
 topic_prompt = PromptTemplate(
-    input_variables=["topic", "CCSS_standard"],
+    input_variables=["topic"],
     template=topic_template
 )
 
@@ -704,7 +704,7 @@ def generate_question_button_click():
         st.warning("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",icon="⚠️")
         st.write(st.session_state.CCSS_standard)
         return
-    topic_prompt_with_inputs = topic_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard)
+    topic_prompt_with_inputs = topic_prompt.format(topic=st.session_state.topic)
     st.session_state.topic_response = llm(topic_prompt_with_inputs)
     if st.session_state.topic_response in ["No", "NO", "No.", "NO."]:
         st.warning("It seems this topic isn't appropriate for writing assessment. Please re-enter the topic.",icon="⚠️")
@@ -1092,7 +1092,7 @@ def load_welcome_page():
     st.session_state.feedback_QA_response = ""
     st.session_state.question_last_id = ""
     st.session_state.answer_last_id = ""    
-    st.header("AI Questions Generator1")
+    st.header("AI Questions Generator2")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. The student can then submit a response to the question and I will provide feedback to the student's response. ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
