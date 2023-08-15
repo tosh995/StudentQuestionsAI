@@ -105,7 +105,20 @@ question_QA_template = """
 
 CCSS_standard_template = """Is {CCSS_standard} a valid Common Core State Standard (CCSS) for English Language Arts (ELA) in the United States? Answer only YES or NO."""
 
-topic_template = """Is {topic} an appropriate topic for evaluating the {CCSS_standard} Common Core State Standard (CCSS) for English Language Arts (ELA) in the United States? Answer only YES or NO."""
+topic_template = """Is {topic} an appropriate topic for a student's assignment? An inappropriate topic would be anything from the following list: 
+
+Violence,
+Adult relationships and romantic content,
+Substance abuse and addiction,
+Explicit or inappropriate language,
+Sexual content and explicit imagery,
+Highly controversial political discussions,
+Religious indoctrination or extremism,
+Self-harm and suicide,
+Discrimination and hate speech,
+
+
+Answer only YES or NO."""
 
 
 feedback_template = """You are the world best writing grader who is evaluating the writing of a student. Here below is the question and the rubrik that the student answered to:
@@ -237,10 +250,6 @@ testing_output_1_check_template ="""
         {output}
 """
 
-
-
-
-
 testing_answer_template ="""
         You are testing a system that generates questions and asks students to write an answer. Act as a student and write an answer to the question below. This answer is for testing purposes so generate an answer that will get about {target_score} out of 10 score. 
         
@@ -250,7 +259,6 @@ testing_answer_template ="""
         ***The question and the rubric for generating the answer below***
         {question}
 """
-
 
 
 # Clear the screen by updating the displayed content
@@ -340,7 +348,6 @@ feedback_QA_prompt = PromptTemplate(
     template=feedback_QA_template
 )
 
-
 testing_topic_CCSS_prompt = PromptTemplate(
     input_variables=["testing_count"],
     template=testing_topic_CCSS_template
@@ -355,7 +362,6 @@ testing_output_1_check_prompt = PromptTemplate(
     input_variables=["topic", "CCSS_standard", "output"],
     template=testing_output_1_check_template
 )
-
 
 
 #function to reset the input screen
@@ -412,13 +418,16 @@ def db_insert_question(question_QA_response,question_QA_result):
     try:
         data = json.loads(question_QA_response)
     except json.JSONDecodeError as e:
-        generate_question()
+        st.warning('JSONDecodeError occured while loading question_QA_response to JSON.', icon="⚠️")
+        #generate_question()
         return
     except ValueError as e:
-        generate_question()
+        st.warning('JSONDecodeError occured while loading question_QA_response to JSON.', icon="⚠️")
+        #generate_question()
         return
     except TypeError as e:
-        generate_question()
+        st.warning('JSONDecodeError occured while loading question_QA_response to JSON.', icon="⚠️")
+        #generate_question()
         return
     #data = json.loads(question_QA_response)
 
@@ -549,13 +558,16 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
     try:
         data = json.loads(feedback_QA_response)
     except json.JSONDecodeError as e:
-        generate_feedback()
+        st.warning('JSONDecodeError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        #generate_feedback()
         return
     except ValueError as e:
-        generate_feedback()
+        st.warning('ValueError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        #generate_feedback()
         return
     except TypeError as e:
-        generate_feedback()
+        st.warning('TypeError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        #generate_feedback()
         return
     #data = json.loads(feedback_QA_response)
 
@@ -650,13 +662,16 @@ def question_QA_check(question_QA_response):
     try:
         data = json.loads(cleaned_list)
     except json.JSONDecodeError as e:
-        generate_question()
+        st.warning('JSONDecodeError occured while loading question_QA_response to JSON.', icon="⚠️")
+        #generate_question()
         return
     except ValueError as e:
-        generate_question()
+        st.warning('TypeError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        #generate_question()
         return
     except TypeError as e:
-        generate_question()
+        st.warning('TypeError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        #generate_question()
         return
     
     #data = json.loads(question_QA_response)
@@ -753,14 +768,14 @@ def generate_feedback_button_click():
  #Function to generate feedback       
 def generate_feedback():
     feedback_prompt_with_inputs = feedback_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer)
-    #st.write("now calling LLM")
+    st.write("now calling LLM")
     #call LLM to generate feedback
     st.session_state.feedback = llm(feedback_prompt_with_inputs)
     feedback_QA_prompt_with_inputs = feedback_QA_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer,feedback=st.session_state.feedback)
     #Call LLM to generate QA on Feedback 
     st.session_state.feedback_QA_response = llm(feedback_QA_prompt_with_inputs)
-    #st.write("showing feedback QA response")
-    #st.write("st.session_state.feedback_QA_response is " + st.session_state.feedback_QA_response)
+    st.write("showing feedback QA response")
+    st.write("st.session_state.feedback_QA_response is " + st.session_state.feedback_QA_response)
     feedback_QA_check(feedback_QA_response=st.session_state.feedback_QA_response)
 
 #function to QA the feedback generated
@@ -792,14 +807,14 @@ def feedback_QA_check(feedback_QA_response):
     else:
         st.session_state.feedback_QA_result="Pass"
     db_insert_feedback(feedback_QA_response,st.session_state.feedback_QA_result)
-    #st.write(" feedback DB insert complete ")
-    #st.write(" feedback status " + st.session_state.feedback_QA_result)
+    st.write(" feedback DB insert complete ")
+    st.write(" feedback status " + st.session_state.feedback_QA_result)
 
     if (st.session_state.feedback_QA_result=="Fail" and st.session_state.feedback_QA_counter<st.session_state.max_feedback_QA_counter):
-        #st.write(" regenerating feedback ")
+        st.write(" regenerating feedback ")
         generate_feedback()
         return
-    #st.write(" feedback ready to show ")
+    st.write(" feedback ready to show ")
     if st.session_state.session_status != 'Auto Testing':
         st.session_state.session_status='Show Feedback'
         load_feedback_display()
