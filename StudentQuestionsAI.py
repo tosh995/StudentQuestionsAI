@@ -818,9 +818,9 @@ def load_question_display():
         st.write(st.session_state.question)
         #st.session_state.answer=get_answer()
         #load_question_display()
-        st.session_state.answer = st.text_area(label=" ", on_change=load_question_display1, placeholder="Type your response here...2000 words max", key="input_answer1", height=320)
-        #if len(input_answer.split(" ")) > 2000:
-            #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
+        st.session_state.answer = st.text_area(label=" ", on_change=load_question_display1, placeholder="Type your response here...1500 words max", key="input_answer1", height=320)
+        #if len(input_answer1.split(" ")) > 2000:
+        #   st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
 
 def load_question_display1():        
@@ -831,16 +831,22 @@ def load_question_display1():
         st.write(st.session_state.question)
         #st.session_state.answer=get_answer()
         #load_question_display()
-        st.session_state.answer = st.text_area(label=" ", on_change=load_question_display, placeholder="Type your response here...2000 words max", key="input_answer1", height=320)
-        #if len(input_answer.split(" ")) > 2000:
-            #st.write("Please enter a shorter answer. The maximum length is 2000 words.") 
+        st.session_state.answer = st.text_area(label=" ", on_change=load_question_display, placeholder="Type your response here...1500 words max", key="input_answer1", height=320)
         st.button("Submit Answer", help="Click to submit your answer", on_click=generate_feedback_button_click)
 
 
 #function to respond to submission of the feedback_QA_counter Answer by the student on clicking the submit button 
 def generate_feedback_button_click():
     #st.write(st.session_state.session_status)
+    if not st.session_state.answer:
+        load_question_display()
+        st.warning('Please enter a response.', icon="⚠️")
+        return
     if st.session_state.answer:
+        if len(st.session_state.answer.split(" ")) > 1500:
+            load_question_display()
+            st.warning('Please enter a shorter answer. The maximum length is 1500 words.', icon="⚠️")
+            return
         if st.session_state.session_status != 'Auto Testing':
             st.session_state.session_status='Show Feedback'
             st.header("AI Questions Generator - Feedback")
@@ -1180,7 +1186,7 @@ def load_welcome_page():
     with col5:
         st.button("Default Values", type='secondary', help="Click to use default values", on_click=default_question_input_page)
     with col6:
-        st.button("AI AutoTesting", type='secondary', help="Click to use default values", on_click=autotesting)
+        st.button("AI AutoTesting", type='secondary', help="Click to initiate Auto Testing", on_click=autotesting)
         
 if st.session_state.session_status == 'Topic Input': 
     load_welcome_page()
