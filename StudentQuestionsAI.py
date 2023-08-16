@@ -122,15 +122,9 @@ question_QA_template = """
 """
 
 
-CCSS_standard_template = """ Common Core State Standard (CCSS) Writing Standards for English Language Arts (ELA) are in the format of "CCSS.ELA-LITERACY.W.X.Y" where X and Y are an integers between 1 and 9. 
-
-Is {CCSS_standard} a valid Common Core State Standard (CCSS) writing standard?
-
-Answer only Yes or No."""
-
 topic_template = """
 
-You are assesing the topic to be used for giving a writing assignment to a student. An inappropriate topic could be anything that falls under one or more of the following categories: 
+You are assessing the topic to be used for giving a writing assignment to a student. An inappropriate topic could be anything that falls under one or more of the following categories: 
 
 *Violence,
 *Adult relationships and romantic content,
@@ -153,7 +147,7 @@ topic:{topic}
 """
 
 
-feedback_template = """You are the world best writing grader who is evaluating the writing of a student. Here below is the question and the rubrik that the student answered to:
+feedback_template = """You are the world's best writing grader who is evaluating the writing of a student. Here below is the question and the rubric that the student answered to:
 
 
 Question Topic: {topic}
@@ -373,11 +367,6 @@ if 'testing_count' not in st.session_state:
 llm = load_LLM(openai_api_key=api_key)
 
 #langchain prompt templates below
-
-CCSS_standard_prompt = PromptTemplate(
-    input_variables=["CCSS_standard"],
-    template=CCSS_standard_template
-)
 
 topic_prompt = PromptTemplate(
     input_variables=["topic","grade"],
