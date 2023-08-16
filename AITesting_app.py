@@ -16,13 +16,41 @@ api_key = st.secrets["api_key"]
 st.set_page_config(page_title="AI Questions Generator", page_icon=":robot:")
 
 
+
+def remove_control_characters_from_string(s):
+    """Remove control characters from a string."""
+    return re.sub(r'[\x00-\x1F]+', '', s)
+
+def clean_json(json_obj):
+    """Recursively traverse a JSON object and remove control characters from any string values."""
+    
+    # If the object is a dictionary
+    if isinstance(json_obj, dict):
+        return {key: clean_json(value) for key, value in json_obj.items()}
+    
+    # If the object is a list
+    elif isinstance(json_obj, list):
+        return [clean_json(item) for item in json_obj]
+    
+    # If the object is a string
+    elif isinstance(json_obj, str):
+        return remove_control_characters_from_string(json_obj)
+    
+    # If the object is neither a dictionary, list, nor string (e.g., number, bool, etc.)
+    else:
+        return json_obj
+
+
+
 question_template = """
     You are a great tutor. Take the following topic of interest from the student and the common core learning standard and create one free response question for the student. The Question should meet the following criteria:
         1. Question should assess the student’s knowledge of the Common Core learning standard given.
-        2. Question should have the context required to answer it. 
+        2. Question should have and introduction and the context required to answer it. 
         3. Assume that the student will be viewing the question and the student is not familiar with the details of the learning standard. So provide any additional context required for answering the question effectively.
         
-    Also include a Rubric that will be used by the teacher for evaluating the student's responses. Do not provide rubric in a tabular format. Do not provide any feedback. Title the rubric as "How you will be evaluated". Keep rubric limited to 100 words.
+     Also include a rubric that will be used by the teacher for evaluating the student's responses. Do not provide rubric in a tabular format. Do not provide any feedback. Keep rubric limited to 120 words.
+     
+     Write the introduction first, then the context, then the actual question to be answered followed by the Rubric (title as "How you will be evaluated")
 
     TOPIC: {topic}
     CCSS_standard: {CCSS_standard}
@@ -72,24 +100,15 @@ question_QA_template = """
         2: Question has significant biases or insensitivities.
         1: Question is highly biased or culturally insensitive.
 
-    Provide your response in the following JSON format. Do not output any other information. Sample JSON response format:
+    Provide your response in the following JSON format. Do not output any other information. Do not add any control characters to your response. Sample JSON response format:
         
-        "topic": "France",
-        "CCSS_standard" : "CCSS.ELA-LITERACY.W.4.1"
-        "question": "What is the capital of France?",
-        "rubric": " How you will be evaluated:
-        Use of at least three different types of figurative language (similes, metaphors, personification)
-        Accurate explanation of each type of figurative language used
-        Clear and effective description of the player's skills and abilities
-        Coherent organization and logical flow in the paragraph
-        Correct grammar, punctuation, and spelling",
-        "relevance_to_CCSS_standard": 5,
+        {{"relevance_to_CCSS_standard": 5,
         "relevance_to_topic_of_interest": 4,
         "question_clarity_and_complexity": 3,
         "rubric_quality": 4,
         "creativity_and_engagement": 5,
         "bias_and_sensitivity": 4,
-        "overall_quality": 3
+        "overall_quality": 3}}
         
 
 
@@ -103,22 +122,33 @@ question_QA_template = """
 """
 
 
-CCSS_standard_template = """Is {CCSS_standard} a valid Common Core State Standard (CCSS) for English Language Arts (ELA) in the United States? Answer only YES or NO."""
+CCSS_standard_template = """ Common Core State Standard (CCSS) Writing Standards for English Language Arts (ELA) are in the format of "CCSS.ELA-LITERACY.W.X.Y" where X and Y are an integers between 1 and 9. 
 
-topic_template = """Is {topic} an appropriate topic for a student's assignment? An inappropriate topic would be anything from the following list: 
+Is {CCSS_standard} a valid Common Core State Standard (CCSS) writing standard?
 
-Violence,
-Adult relationships and romantic content,
-Substance abuse and addiction,
-Explicit or inappropriate language,
-Sexual content and explicit imagery,
-Highly controversial political discussions,
-Religious indoctrination or extremism,
-Self-harm and suicide,
-Discrimination and hate speech,
+Answer only Yes or No."""
 
+topic_template = """
 
-Answer only YES or NO."""
+You are assesing the topic to be used for giving a writing assignment to a student. An inappropriate topic could be anything that falls under one or more of the following categories: 
+
+*Violence,
+*Adult relationships and romantic content,
+*Substance abuse and addiction,
+*Explicit or inappropriate language,
+*Sexual content and explicit imagery,
+*Highly controversial political discussions,
+*Religious indoctrination or extremism,
+*Self-harm and suicide,
+*Discrimination and hate speech,
+*Invalid topic,
+*Missing topic
+
+Is the following topic an appropriate topic for a student's assignment? Answer only YES or NO.
+
+topic:{topic}
+
+"""
 
 
 feedback_template = """You are the world best writing grader who is evaluating the writing of a student. Here below is the question and the rubrik that the student answered to:
@@ -214,40 +244,61 @@ CCSS Standard: {CCSS_standard}
 ***The feedback to be evaluated starts here***
 {feedback} 
 
-Provide your response in the following JSON format. Do not output any other information. Sample JSON response format:
+Provide your response in the following JSON format. Do not output any other information. Do not add any information to the JSON object other than the format below. Do not add any non-printable control characters to the JSON output. Sample JSON response format:
 
         
-        "feedback": " Excellent job on expressing your enthusiasm for "Belly Up" by Stuart Gibbs. I can see that you've shared your opinion and gave us a summary of the story. Let's find ways to make your writing even better!
-        1. **Introduction:** You've done a nice job introducing your favorite book and why you like it. Try to introduce your topic in a more engaging way by combining the first few sentences. For instance, "My favorite book ever is 'Belly Up' by Stuart Gibbs, a suspenseful tale that starts with a mystery: the death of a hippo named Henry."
-        2. **Supporting Reasons:** You've shared that the interesting topic, suspense, and humor are why you enjoy the book. Well done! Let's give specific examples to support these points and help the reader understand what makes these elements so good.
-        3. **Linking Words:** You started off strong with the linking word 'Because'. Incorporate more of these into your writing to seamlessly connect your opinion and reasons.
-        4. **Conclusion:** Your concluding statement encourages others to read the book, which is excellent! In your conclusion, try to summarize why you think the book is worth reading.
-        5. **Other Feedback:** Remember to check your spelling and grammar. For example, 'Their' should be 'there', and 'breathe' should be 'breath'. Also, always capitalize names such as 'FunJungle'.",
-        "relevance_to_students_response": 4,
+        {{"relevance_to_students_response": 4,
         "alignment_with_CCSS_standard": 5,
         "clarity_and_understandability": 3,
         "constructiveness_and_encouragement": 4,
         "accuracy_and_fairness": 5,
-        "overall_quality": 3
+        "overall_quality": 3}}
 """
 
 testing_topic_CCSS_template = """
-        You are testing a tool that takes  inputs - a topic of interest and a writing Common Core State Standard (CCSS) for English Language Arts (ELA) and generates a question related to that topic to test that standard. Your job is to generate {testing_count} pairs of input values for testing the tool. Include some bad inputs (such as invalid CCSS standard or topic that is longer than 6 words or topic that is inappropriate for the student etc.) to see how the tool reacts. Generate your output in the following JSON format. 
-        "Topic": "History", "CCSS": "CCSS.ELA-LITERACY.W.5.2",
-        "Topic": "Science", "CCSS": "CCSS.ELA-LITERACY.W.4.1",
-        "Topic": "Religion", "CCSS": "CCSS.ELA-LITERACY.W.6.3",
-        "Topic": "Mathematics", "CCSS": "CCSS.ELA-LITERACY.W.3.4",
-        "Topic": "Politics", "CCSS": "CCSS.ELA-LITERACY.W.7.2".....
+        You are testing a tool that takes  inputs - a topic of interest and a writing Common Core State Standard (CCSS) for English Language Arts (ELA) and generates a question related to that topic to test that standard. Your job is to generate {testing_count} pairs of input values for testing the tool. Include some bad inputs (such as invalid CCSS standard and a topic that is inappropriate for a student etc.) to see how the tool reacts. Generate your output in the following JSON format. Do not add any information to the JSON object other than the format below. Do not add any non-printable control characters to the JSON output. 
+        "topic": "Baseball", "CCSS_standard": "CCSS.ELA-LITERACY.W.5.2"
+        
 """
 
 testing_output_1_check_template ="""
-        You are testing a tool that takes 2 inputs - a topic of interest and a writing Common Core State Standard (CCSS) for English Language Arts (ELA) and then generates a question related to that topic to test that standard. It generates warning messages if the topic entered is inappropriate for the student or if the CCSS standard entered is missing or not valid. Your job is to evaluate if the output generated by the tool is inappropriate or not. Only respond with Yes or No. No explanation.  
+        You are a QA tester for an application that takes 2 inputs - a topic of interest and a writing Common Core State Standard (CCSS) for English Language Arts (ELA). It then generates a question related to that topic to test that standard. It should generate a warning message if the topic entered is inappropriate for the student or if the CCSS standard entered is missing or incorrect. Your job is to evaluate if the output generated by the tool is correct or not. If the tool's output is correct, say Yes. If the tools output is incorrect, say No. Also give a brief explanation for your response.
         
-        **Question Topic:** {topic}
-        **CCSS Standard entered:** {CCSS_standard}
-
-        **Output generated by the tool**
-        {output}
+        Note: The application is not expected to give any detailed explanation. A brief warning message is sufficient. Your job is to evaluate if its right or wrong. 
+        Note: Common Core State Standard (CCSS) Writing Standards for English Language Arts (ELA) are in the format of "CCSS.ELA-LITERACY.W.X.Y" where X and Y are an integers between 1 and 9. 
+        **Note: The application is expected to accept CCSS standards for writing assessment only. So CCSS.ELA-LITERACY.R.5.2 should generate a warning.**
+        
+        
+        Example 1: 
+        topic: Invalid Topic 
+        CCSS Standard: CCSS.ELA-LITERACY.W.5.2
+        Application's Output: Warning - this is not a valid topic
+        Was the application's response right or wrong?: Right, because this is not a valid topic
+        
+        Example 2: 
+        topic: Baseball 
+        CCSS Standard: CCSS.ELA-LITERACY.W.5.2
+        Application's Output: Warning - this is not a valid writing CCSS Standard
+        Was the application's response right or wrong?: Wrong, beause the CCSS standard is a valid one
+        
+        Example 3: 
+        topic: Baseball 
+        CCSS Standard: CCSS.ELA-LITERACY.R.3.2
+        Application's Output: Warning - this is not a valid writing CCSS Standard
+        Was the application's response right or wrong?: Right, because writing CCSS Standards are in the format of CCSS.ELA-LITERACY.W._._
+        
+        Example 4: 
+        topic: Solar System 
+        CCSS Standard: CCSS.ELA-LITERACY.W.4.3
+        Application's Output: Warning - this is not a valid CCSS Standard
+        Was the application's response right or wrong?: Wrong, because writing CCSS Standards are in the format of CCSS.ELA-LITERACY.W._._ and this is a valid one. 
+        
+        Example 5:
+        Topic: {topic}
+        CCSS Standard entered:{CCSS_standard}
+        Application's Output: {output}
+        Was the application's response right or wrong?:
+       
 """
 
 testing_answer_template ="""
@@ -291,22 +342,29 @@ if 'max_feedback_QA_counter' not in st.session_state:
 #    st.session_state.CCSS_standard = ""
 if 'question' not in st.session_state:
     st.session_state.question = ""
+if 'question_QA_response' not in st.session_state:
+    st.session_state.question_QA_response = {}
 if 'question_QA_result' not in st.session_state:
     st.session_state.question_QA_result = ""
 if 'answer' not in st.session_state:
-    st.session_state.answer = ""
+    st.session_state.answer = "" 
 if 'feedback' not in st.session_state:
     st.session_state.feedback = ""
 if 'feedback_QA_result' not in st.session_state:
     st.session_state.feedback_QA_result = ""
 if 'feedback_QA_response' not in st.session_state:
-    st.session_state.feedback_QA_response = ""
+    st.session_state.feedback_QA_response = {}
 #variables to store the ID values for foreign key references in various tables
 if 'question_last_id' not in st.session_state:
     st.session_state.question_last_id = ""
 if 'answer_last_id' not in st.session_state:
     st.session_state.answer_last_id = ""    
 
+if 'topic_warning' not in st.session_state:
+    st.session_state.topic_warning = ""
+if 'CCSS_standard_warning' not in st.session_state:
+    st.session_state.CCSS_standard_warning = ""     
+    
 if "session_status" not in st.session_state:
     st.session_state.session_status='Topic Input'
 
@@ -400,35 +458,51 @@ def get_answer():
     return input_answer 
 
 
+def split_on_separator(text):
+    separator1 = "How you will be evaluated"
+    separator2 = "Rubric"
+    
+    # Find the starting index of the separator in the text
+    index1 = text.find(separator1)
+    index2 = text.find(separator1)
+    
+    # If the separator is found
+    if index1 != -1:
+        # Return the two parts: Before and starting from the separator
+        return text[:index1], text[index1:]
+    elif index2 != -1:
+        # Return the two parts: Before and starting from the separator
+        return text[:index2], text[index2:]   
+    else:
+        # If the separator is not found, return the original string and an empty string
+        return text, ''
+
+
 #function to insert the Question and its QA information into Question table
-def db_insert_question(question_QA_response,question_QA_result):
+def db_insert_question():
     #cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
     #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in st.session_state.testing_info]
-    """cleaned_question_QA_response = []
-    for row in question_QA_response:
-        cleaned_row = {}
-        for key, value in row.items():
-            if isinstance(value, str):
-                cleaned_value = re.sub(r'[\x00-\x1F]+', '', value)
-                cleaned_row[key] = cleaned_value
-            else:
-                cleaned_row[key] = value
-    cleaned_question_QA_response.append(cleaned_row)"""
-    #data = json.loads(cleaned_string)
     try:
-        data = json.loads(question_QA_response)
+        data = json.loads(st.session_state.question_QA_response)
     except json.JSONDecodeError as e:
         st.warning('JSONDecodeError occured while loading question_QA_response to JSON.', icon="⚠️")
+        st.write (e)
         #generate_question()
         return
     except ValueError as e:
-        st.warning('JSONDecodeError occured while loading question_QA_response to JSON.', icon="⚠️")
+        st.warning('ValueError occured while loading question_QA_response to JSON.', icon="⚠️")
+        st.write (e)
         #generate_question()
         return
     except TypeError as e:
-        st.warning('JSONDecodeError occured while loading question_QA_response to JSON.', icon="⚠️")
+        st.warning('TypeError occured while loading question_QA_response to JSON.', icon="⚠️")
+        st.write (e)
         #generate_question()
         return
+        
+        
+    question_part,rubric_part = split_on_separator(st.session_state.question)    
+        
     #data = json.loads(question_QA_response)
 
     #global question
@@ -487,10 +561,10 @@ def db_insert_question(question_QA_response,question_QA_result):
         load_date_time
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)
     ''', (
-        data['topic'],
-        data['CCSS_standard'],
-        data['question'],
-        data['rubric'],
+        st.session_state.topic,
+        st.session_state.CCSS_standard,
+        question_part,
+        rubric_part,
         data['relevance_to_CCSS_standard'],
         data['relevance_to_topic_of_interest'],
         data['question_clarity_and_complexity'],
@@ -498,7 +572,7 @@ def db_insert_question(question_QA_response,question_QA_result):
         data['creativity_and_engagement'],
         data['bias_and_sensitivity'],
         data['overall_quality'],
-        question_QA_result,
+        st.session_state.question_QA_result,
         datetime.now()
     ))
     
@@ -551,12 +625,12 @@ def db_insert_answer():
 
 
 #function to load the feedback into the feedback table
-def db_insert_feedback(feedback_QA_response,feedback_QA_result):
+def db_insert_feedback():
     #cleaned_string = re.sub(r'[\x00-\x1F]+', '', feedback_QA_response)
     #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in feedback_QA_response]
     #data = json.loads(cleaned_string)
     try:
-        data = json.loads(feedback_QA_response)
+        data = json.loads(st.session_state.feedback_QA_response)
     except json.JSONDecodeError as e:
         st.warning('JSONDecodeError occured while loading feedback_QA_response to JSON.', icon="⚠️")
         #generate_feedback()
@@ -625,14 +699,14 @@ def db_insert_feedback(feedback_QA_response,feedback_QA_result):
     ''', (
         st.session_state.question_last_id,
         st.session_state.answer_last_id,
-        data['feedback'],
+        st.session_state.feedback,
         data['relevance_to_students_response'],
         data['alignment_with_CCSS_standard'],
         data['clarity_and_understandability'], 
         data['constructiveness_and_encouragement'], 
         data['accuracy_and_fairness'],
         data['overall_quality'],
-        feedback_QA_result,
+        st.session_state.feedback_QA_result,
         datetime.now()
     ))
     # Commit the changes and close the connection
@@ -647,31 +721,41 @@ def generate_question():
     prompt_with_inputs = question_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard)
     #call LLM to generate question
     st.session_state.question = llm(prompt_with_inputs)
+    if st.session_state.session_status == 'Auto Testing':
+        st.write("**Question Generated**")
+        st.write(st.session_state.question)
+        st.write("**Now evaluating question's quality (Each measure must by greater than 3)**")
     #starting Question QA process
     question_QA_prompt_with_inputs = question_QA_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question)
+    st.session_state.question_QA_response = {}
     #call LLM to generate QA for question
     st.session_state.question_QA_response = llm(question_QA_prompt_with_inputs)
-    question_QA_check(question_QA_response=st.session_state.question_QA_response)
+    if st.session_state.session_status == 'Auto Testing':
+        st.write(st.session_state.question_QA_response)
+    question_QA_check()
 
-def question_QA_check(question_QA_response):
+def question_QA_check():
     st.session_state.question_QA_counter += 1
     # Parse the JSON string into a dictionary
     #cleaned_string = re.sub(r'[\x00-\x1F]+', '', question_QA_response)
-    cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in question_QA_response]
+    #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in question_QA_response]
     #data = json.loads(cleaned_string)
     try:
-        data = json.loads(cleaned_list)
+        data = json.loads(st.session_state.question_QA_response)
     except json.JSONDecodeError as e:
         st.warning('JSONDecodeError occured while loading question_QA_response to JSON.', icon="⚠️")
+        st.write (e)
         #generate_question()
         return
     except ValueError as e:
-        st.warning('TypeError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        st.warning('ValueError occured while loading question_QA_response to JSON.', icon="⚠️")
         #generate_question()
+        st.write (e)
         return
     except TypeError as e:
-        st.warning('TypeError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        st.warning('TypeError occured while loading question_QA_response to JSON.', icon="⚠️")
         #generate_question()
+        st.write (e)
         return
     
     #data = json.loads(question_QA_response)
@@ -685,38 +769,45 @@ def question_QA_check(question_QA_response):
         st.session_state.question_QA_result="Fail"
     else:
         st.session_state.question_QA_result="Pass"
-    db_insert_question(question_QA_response,st.session_state.question_QA_result) #load the question with its QA information to Question table
+    if st.session_state.session_status == 'Auto Testing':
+        st.write("**Attempt #**"+ str(st.session_state.question_QA_counter) + "** QA check **" + st.session_state.question_QA_result)   
+    db_insert_question() #load the question with its QA information to Question table
    #continue generating question if the QA fails until we reach the max limit 
     if (st.session_state.question_QA_result=="Fail" and st.session_state.question_QA_counter<st.session_state.max_question_QA_counter):
+        if st.session_state.session_status == 'Auto Testing':
+            st.write("**Regenarting question**")
         generate_question()
 
 #process to generate question starts on clining the generate question button 
 def generate_question_button_click():       
     if not st.session_state.topic:
         st.warning('Please enter a topic.', icon="⚠️")
+        st.session_state.topic_warning="Warning - Please enter a topic."
         return
     if not st.session_state.CCSS_standard:
         st.warning('Please enter a writing CCSS standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W)', icon="⚠️")
+        st.session_state.CCSS_standard_warning="Warning - Please enter a writing CCSS standard. Instructions [here](http://www.thecorestandards.org/ELA-Literacy/W)"
         return
     CCSS_standard_prompt_with_inputs = CCSS_standard_prompt.format(CCSS_standard=st.session_state.CCSS_standard)
     st.session_state.CCSS_standard_response = llm(CCSS_standard_prompt_with_inputs)
     if st.session_state.CCSS_standard_response in ["No", "NO", "No.", "NO."]:
-        st.warning("It seems this learning standard isn't correct. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",icon="⚠️")
-        st.write(st.session_state.CCSS_standard)
+        st.warning("It seems this isn't a valid CCSS standard for writing. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed.",icon="⚠️")
+        #st.write(st.session_state.CCSS_standard)
+        st.session_state.CCSS_standard_warning="Warning - It seems this CCSS standard isn't valid for writing. Please re-enter. Reference [this link](http://www.thecorestandards.org/ELA-Literacy/W) if needed."
         return
     topic_prompt_with_inputs = topic_prompt.format(topic=st.session_state.topic)
     st.session_state.topic_response = llm(topic_prompt_with_inputs)
     if st.session_state.topic_response in ["No", "NO", "No.", "NO."]:
         st.warning("It seems this topic isn't appropriate for writing assessment. Please re-enter the topic.",icon="⚠️")
         st.write(st.session_state.topic)
+        st.session_state.topic_warning="Warning - It seems this topic isn't appropriate for writing assessment. Please re-enter the topic."
         return
     st.session_state.question_QA_counter=0
     st.session_state.question=""
     st.session_state.question_QA_result=""       
-    st.session_state.question_QA_response=""
+    st.session_state.question_QA_response={}
     generate_question()
-    
-    if st.session_state.session_status != 'Auto Testing':
+    if  st.session_state.session_status !='Auto Testing':
         st.session_state.session_status='Answer Input'
         load_question_display()
         
@@ -736,7 +827,7 @@ def load_question_display():
 
 def load_question_display1():        
         st.header("AI Questions Generator")
-        st.markdown("### Your Question:")
+        st.markdown("### Here is your question:")
         #st.write(question_QA_response)
         #st.write (counter)
         st.write(st.session_state.question)
@@ -768,33 +859,46 @@ def generate_feedback_button_click():
  #Function to generate feedback       
 def generate_feedback():
     feedback_prompt_with_inputs = feedback_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer)
-    st.write("now calling LLM")
+    
+     #st.write("**Now calling LLM to generate feedback...**")
     #call LLM to generate feedback
     st.session_state.feedback = llm(feedback_prompt_with_inputs)
+    if st.session_state.session_status == 'Auto Testing':
+        st.write ("**Feedback Generated**")
+        st.write (st.session_state.feedback)
+        st.write ("**Now generating Feedback QA scores (Each measure must be greater than 3)**")
     feedback_QA_prompt_with_inputs = feedback_QA_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,question=st.session_state.question,answer=st.session_state.answer,feedback=st.session_state.feedback)
+    st.session_state.feedback_QA_response ={}
     #Call LLM to generate QA on Feedback 
     st.session_state.feedback_QA_response = llm(feedback_QA_prompt_with_inputs)
-    st.write("showing feedback QA response")
-    st.write("st.session_state.feedback_QA_response is " + st.session_state.feedback_QA_response)
-    feedback_QA_check(feedback_QA_response=st.session_state.feedback_QA_response)
+    #st.write("showing feedback QA response")
+    if st.session_state.session_status == 'Auto Testing':
+        st.write("Feedback QA response is " + st.session_state.feedback_QA_response)
+    feedback_QA_check()
 
 #function to QA the feedback generated
-def feedback_QA_check(feedback_QA_response):
+def feedback_QA_check():
     st.session_state.feedback_QA_counter +=1
     # Parse the JSON string into a dictionary
     #cleaned_string = re.sub(r'[\x00-\x1F]+', '', feedback_QA_response)
-    cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in feedback_QA_response]
+    #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in feedback_QA_response]
     #data = json.loads(cleaned_string)
     try:
-        data = json.loads(cleaned_list)
+        data = json.loads(st.session_state.feedback_QA_response)
     except json.JSONDecodeError as e:
-        generate_feedback()
+        st.warning('JSONDecodeError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        st.write (e)
+        #generate_feedback()
         return
     except ValueError as e:
-        generate_feedback()
+        st.warning('ValueError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        st.write (e)
+        #generate_feedback()
         return
     except TypeError as e:
-        generate_feedback()
+        st.warning('TypeError occured while loading feedback_QA_response to JSON.', icon="⚠️")
+        st.write (e)
+        #generate_feedback()
         return
     #data = json.loads(feedback_QA_response) 
     if ( data['relevance_to_students_response'] < 4 or 
@@ -806,15 +910,17 @@ def feedback_QA_check(feedback_QA_response):
         st.session_state.feedback_QA_result="Fail"
     else:
         st.session_state.feedback_QA_result="Pass"
-    db_insert_feedback(feedback_QA_response,st.session_state.feedback_QA_result)
-    st.write(" feedback DB insert complete ")
-    st.write(" feedback status " + st.session_state.feedback_QA_result)
+    db_insert_feedback()
+    #st.write(" feedback DB insert complete ")
+    if st.session_state.session_status == 'Auto Testing':
+        st.write(" Feedback QA Result = " + st.session_state.feedback_QA_result)
 
     if (st.session_state.feedback_QA_result=="Fail" and st.session_state.feedback_QA_counter<st.session_state.max_feedback_QA_counter):
-        st.write(" regenerating feedback ")
+        if st.session_state.session_status == 'Auto Testing':
+            st.write(" Regenerating feedback ")
         generate_feedback()
         return
-    st.write(" feedback ready to show ")
+    #st.write(" feedback ready to show ")
     if st.session_state.session_status != 'Auto Testing':
         st.session_state.session_status='Show Feedback'
         load_feedback_display()
@@ -829,10 +935,6 @@ def load_feedback_display():
     st.markdown("### Your response:")  
     st.write(st.session_state.answer)    
     st.button("Get Another Question", help="Click to get another question", on_click=load_welcome_page_initiator)
-
-
-
-
 
 
 
@@ -854,23 +956,6 @@ def autotesting():
     testing_topic_CCSS_prompt_with_inputs = testing_topic_CCSS_prompt.format(testing_count = st.session_state.testing_count)
     #call LLM to generate inputs
     st.session_state.testing_inputs = llm(testing_topic_CCSS_prompt_with_inputs)
-    #load the LLM output into a clean string
-    #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.testing_inputs)
-    """
-    cleaned_testing_info = []
-    for row in st.session_state.testing_inputs:
-        # Check if row is a dictionary before processing
-        if not isinstance(row, dict):
-            continue
-        cleaned_row = {}
-        for key, value in row.items():
-            if isinstance(value, str):
-                cleaned_value = re.sub(r'[\x00-\x1F]+', '', value)
-                cleaned_row[key] = cleaned_value
-            else:
-                cleaned_row[key] = value
-        cleaned_testing_info.append(cleaned_row)
-    """
     try:
         st.session_state.testing_info = json.loads(st.session_state.testing_inputs)
     except json.JSONDecodeError as e:
@@ -885,43 +970,51 @@ def autotesting():
         st.warning("TypeError while accessing testing inputs")
         st.write (st.session_state.testing_inputs)
         return
-    st.write(json.dumps(st.session_state.testing_info, indent=4))    
-    st.write ("Step 2. Now starting run cycles....")
+    st.write(st.session_state.testing_info)    
+    st.write ("Step 2. Now starting test case run cycles....")
     for st.session_state.test_number in range(1, st.session_state.testing_count+1):
-        st.write ("Step 2."+ str(st.session_state.test_number) + " started...")
+        st.write ("Test case "+ str(st.session_state.test_number) + " started...")
         #assigning the input values for the run cycle
-        st.session_state.topic = st.session_state.testing_info [st.session_state.test_number-1] ["Topic"]
-        st.session_state.CCSS_standard = st.session_state.testing_info [st.session_state.test_number-1] ["CCSS"]
+        st.session_state.topic = st.session_state.testing_info [st.session_state.test_number-1] ["topic"]
+        st.session_state.CCSS_standard = st.session_state.testing_info [st.session_state.test_number-1] ["CCSS_standard"]
+        st.write ("Topic = "+st.session_state.topic)
+        st.write ("CCSS Standard = "+st.session_state.CCSS_standard)
         captured_stdout=""
         captured_stderr=""
+        st.session_state.question=""
+        st.session_state.testing_info [st.session_state.test_number-1] ["output_1"] =""
+        st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"]=0
+        st.session_state.testing_info [st.session_state.test_number-1] ["output_2"]=""
+        st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"]=0
+        st.session_state.testing_info [st.session_state.test_number-1] ["test_result"]="TBD"
+        st.session_state.testing_info [st.session_state.test_number-1] ["answer"]=""
+        st.session_state.testing_info [st.session_state.test_number-1] ["target_score"]=7
+        st.session_state.topic_warning = ""
+        st.session_state.CCSS_standard_warning = ""  
         #redirecting the output buffer and error buffers for analysis
-        with contextlib.redirect_stdout(io.StringIO()) as stdout_buf, contextlib.redirect_stderr(io.StringIO()) as stderr_buf:
+        #with contextlib.redirect_stdout(io.StringIO()) as stdout_buf, contextlib.redirect_stderr(io.StringIO()) as stderr_buf:
             #calling generate question process automatically
-            generate_question_button_click()
-            # Capture the captured output and warnings for analysis
-        captured_stdout = stdout_buf.getvalue()
-        captured_stderr = stderr_buf.getvalue()
-        if captured_stderr:
+        generate_question_button_click()
+            
+        if st.session_state.topic_warning  or st.session_state.CCSS_standard_warning: 
             # Search for a warning message using a regular expression
             #warning_pattern = r"Please re-enter"
             #if re.search(warning_pattern, captured_stderr):
             #st.session_state.testing_info [st.session_state.test_number-1] ["Test Result"] = "Failed" 
-            st.session_state.testing_info [st.session_state.test_number-1] ["output_1"] = captured_stderr 
+            st.session_state.testing_info [st.session_state.test_number-1] ["output_1"] = st.session_state.topic_warning + st.session_state.CCSS_standard_warning  
             #checking if the error message was expected
-            testing_output_1_check_with_inputs = testing_output_1_check.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,output = st.session_state.captured_stderr)
+            testing_output_1_check_prompt_with_inputs = testing_output_1_check_prompt.format(topic=st.session_state.topic,CCSS_standard=st.session_state.CCSS_standard,output = st.session_state.testing_info [st.session_state.test_number-1] ["output_1"])
             #call LLM to evaluate output
-            testing_output_1_check_results=llm(testing_output_1_check_with_inputs)
-            if testing_output_1_check_results in ("Yes", "Yes.", "YES","YES."):
+            testing_output_1_check_results=llm(testing_output_1_check_prompt_with_inputs)
+            st.write("LLM's evaluation on whether warning message was appropriate or not =" + testing_output_1_check_results)
+            if "Right" in testing_output_1_check_results or "RIGHT" in testing_output_1_check_results:
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] = 5
             else: 
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] = 0
             st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] = "N/A"        
             st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] = 0 
-            continue
         else:
-            st.session_state.testing_info [st.session_state.test_number-1] ["output_1"] = captured_stdout   
-            #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.question_QA_response)
-            #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in question_QA_response]
+            st.session_state.testing_info [st.session_state.test_number-1] ["output_1"] = st.session_state.question   
             try:
                 question_qa_data = json.loads(st.session_state.question_QA_response)
             except json.JSONDecodeError as e:
@@ -945,23 +1038,28 @@ def autotesting():
             #call LLM to generate inputs
             st.session_state.testing_info [st.session_state.test_number-1] ["answer"] = llm (testing_answer_prompt_with_inputs)
             st.session_state.answer = st.session_state.testing_info [st.session_state.test_number-1] ["answer"]
+            st.write("**Answer generated by testing script as below**")
+            st.write(st.session_state.answer)
             captured_stdout=""
             captured_stderr=""
+            st.session_state.feedback=""
+            st.session_state.feedback_QA_result=""
+            st.session_state.feedback_QA_response=""
             with contextlib.redirect_stdout(io.StringIO()) as stdout_buf, contextlib.redirect_stderr(io.StringIO()) as stderr_buf:
             #calling generate question process automatically
                 generate_feedback_button_click()
             # Capture the captured output and warnings for analysis
             captured_stdout = stdout_buf.getvalue()
             captured_stderr = stderr_buf.getvalue()
+            #st.write("captured_stdout = " + captured_stdout)
+            #st.write("captured_stderr = " + captured_stderr)
             if captured_stderr:
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] = captured_stderr 
-                st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] ="N/A"    
+                st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] = 0    
             else: 
-                st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] = captured_stdout 
-                #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.feedback_QA_response)
-                #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in feedback_QA_response]
+                st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] = st.session_state.feedback 
                 try:
-                    feedback_qa_data = json.loads(feedback_QA_response)
+                    feedback_qa_data = json.loads(st.session_state.feedback_QA_response)
                 except json.JSONDecodeError as e:
                     #generate_feedback()
                     st.write("JSONDecodeError occured while evaluating feedback QA response")
@@ -978,58 +1076,27 @@ def autotesting():
                     st.write (feedback_QA_response)
                     return
                 st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] = feedback_qa_data['overall_quality']
-            if (st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] > 3 and st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] > 3 ) or (st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] > 3 and st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] == "N/A"):
-                st.session_state.testing_info [st.session_state.test_number-1] ["test_result"] = "Pass"
-            else:
-                st.session_state.testing_info [st.session_state.test_number-1] ["test_result"] = "Fail"
-            st.write(st.session_state.testing_info [st.session_state.test_number-1] ["test_result"])    
+        if (st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] > 3 and st.session_state.testing_info [st.session_state.test_number-1] ["output_2_quality"] > 3 ) or (st.session_state.testing_info [st.session_state.test_number-1] ["output_1_quality"] > 3 and st.session_state.testing_info [st.session_state.test_number-1] ["output_2"] == "N/A"):
+            st.session_state.testing_info [st.session_state.test_number-1] ["test_result"] = "Pass"
+        else:
+            st.session_state.testing_info [st.session_state.test_number-1] ["test_result"] = "Fail"
+        st.write("Test Case " + str(st.session_state.test_number) +  " " + st.session_state.testing_info [st.session_state.test_number-1] ["test_result"] + "ed")    
     #load test results into table    
     st.write ("Step 3. Loading test results into database...")    
     db_insert_testing_results()
     #Display test result summary on screen
     st.write ("Step 4. Displaying Auto testing results below:")    
-    st.write(json.dumps(st.session_state.testing_info, indent=4))
-    st.write ("Autotesting Complete. Click the button below to go back to the tool")
+    st.write (st.session_state.testing_info)
+    st.write ("Step 5: Autotesting Complete! Click the button below to go back to the tool")
     st.button("Return", help="Click to go back to the tool", on_click=load_welcome_page_initiator)
 
    
 def db_insert_testing_results():    
 
-    #load the testing results into a clean string
-    #cleaned_string = re.sub(r'[\x00-\x1F]+', '', st.session_state.testing_info)
-    #cleaned_list = [re.sub(r'[\x00-\x1F]+', '', item) for item in st.session_state.testing_info] - for list
-    """cleaned_testing_info = []
-    for row in st.session_state.testing_info:
-        # Check if row is a dictionary before processing
-        if not isinstance(row, dict):
-            continue
-        cleaned_row = {}
-        for key, value in row.items():
-            if isinstance(value, str):
-                cleaned_value = re.sub(r'[\x00-\x1F]+', '', value)
-                cleaned_row[key] = cleaned_value
-            else:
-                cleaned_row[key] = value
-        cleaned_testing_info.append(cleaned_row)"""
-
-    #data = json.loads(cleaned_string)
-    try:
-        data = json.loads(st.session_state.testing_info)
-    except json.JSONDecodeError as e:
-        st.warning("Error while loading testing results into the database")
-        st.write (st.session_state.testing_info)
-        return
-    except ValueError as e:
-        st.warning("Error while loading testing results into the database")
-        st.write (st.session_state.testing_info)
-        return
-    except TypeError as e:
-        st.warning("Error while loading testing results into the database")
-        st.write (st.session_state.testing_info)
-        return
+    
 
     # Connect to the SQLite database
-    conn = sqlite3.connect('autotesting.db')
+    conn = sqlite3.connect('studentquestionsai.db')
     cursor = conn.cursor()
 
     # Create the table if it doesn't exist
@@ -1045,6 +1112,7 @@ def db_insert_testing_results():
             answer TEXT,
             output_2 TEXT,
             output_2_quality INTEGER,
+            test_result TEXT,
             load_date_time TIMESTAMP
         )
     ''')
@@ -1062,11 +1130,11 @@ def db_insert_testing_results():
     # Insert the data into the table
     
     # Iterate through the data JSON object and insert data into the table
-    for counter, row in enumerate(data, start=1):
+    for counter, row in enumerate(st.session_state.testing_info, start=1):
         query = '''
             INSERT INTO auto_testing_results 
             (test_run, test_case, topic, CCSS_standard, output_1, output_1_quality, answer, output_2, output_2_quality, test_result, load_date_time)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
         '''
         data_tuple = (
             new_test_run, counter, row['topic'], row['CCSS_standard'], row['output_1'], 
@@ -1086,13 +1154,16 @@ def load_welcome_page():
     st.session_state.feedback_QA_counter = 0
     st.session_state.question = ""
     st.session_state.question_QA_result = ""
+    st.session_state.question_QA_response = {}
     st.session_state.answer = ""
     st.session_state.feedback = ""
     st.session_state.feedback_QA_result = ""
-    st.session_state.feedback_QA_response = ""
+    st.session_state.feedback_QA_response = {}
     st.session_state.question_last_id = ""
-    st.session_state.answer_last_id = ""    
-    st.header("AI Questions Generator2")
+    st.session_state.answer_last_id = ""  
+    st.session_state.topic_warning = ""
+    st.session_state.CCSS_standard_warning = ""      
+    st.header("AI Questions Generator")
     st.markdown("I am an AI Question Generator Tool. I take a student's topic of interest and Common Core Learning Standard as inputs and generate open ended questions for the student to answer. The student can then submit a response to the question and I will provide feedback to the student's response. ")
     st.markdown("## Enter your preferences")
     st.session_state.CCSS_standard = get_CCSS_standard()
